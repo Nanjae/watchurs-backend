@@ -382,3 +382,6 @@
    3. @relation directive
       - https://www.prisma.io/docs/datamodel-and-migrations/datamodel-MYSQL-knul/#relations
       - 필요한게 있으면 찾아다 쓰자! => 왠만큼 필요한 건 다 있어서 쓸 줄만 알면 편한거 같음
+
+https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/nFvh-XU42JuhTMC3wlqLh9rn-u0zhm9cDzuzX2nkaSGz3A?api_key=RGAPI-b6183f18-ff24-4adf-80a1-cebed3d61818
+nFvh-XU42JuhTMC3wlqLh9rn-u0zhm9cDzuzX2nkaSGz3A

@@ -2,3 +2,14 @@ type User {
   id: ID! @id
   name: String!
 }
+
+type Summoner {
+  id: ID! @id
+  sId: String!
+  sName: String!
+  sTier: String! @default(value:"Unranked")
+  sRank: String! @default(value:"Unranked")
+  sPoints: Int!
+  sWins: Int!
+  sLosses: Int!
+}
