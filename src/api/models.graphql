@@ -13,3 +13,8 @@ type Summoner {
   sWins: Int
   sLosses: Int
 }
+
+type Broadcaster {
+  id: ID!
+  bName: String!
+}
