@@ -1,6 +1,17 @@
 type User {
   id: ID! @id
   name: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Broadcaster {
+  id: ID! @id
+  bId: String!
+  bName: String!
+  bSummoner: Summoner @relation(link: INLINE name: "SummonerOfBroadcaster" onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Summoner {
@@ -12,9 +23,7 @@ type Summoner {
   sPoints: Int!
   sWins: Int!
   sLosses: Int!
-}
-
-type Broadcaster {
-  id: ID! @id
-  bName: String!
+  sBroadcaster: Broadcaster @relation(name: "SummonerOfBroadcaster")
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }

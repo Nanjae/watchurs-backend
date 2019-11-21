@@ -1,6 +1,17 @@
 type User {
   id: ID!
   name: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Broadcaster {
+  id: ID!
+  bId: String!
+  bName: String!
+  bSummoner: Summoner
+  createdAt: String!
+  updatedAt: String!
 }
 
 type Summoner {
@@ -12,9 +23,7 @@ type Summoner {
   sPoints: Int!
   sWins: Int
   sLosses: Int
-}
-
-type Broadcaster {
-  id: ID!
-  bName: String!
+  sBroadcaster: Broadcaster
+  createdAt: String!
+  updatedAt: String!
 }

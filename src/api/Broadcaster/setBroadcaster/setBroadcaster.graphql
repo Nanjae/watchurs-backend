@@ -1,0 +1,7 @@
+type Mutation {
+  setBroadcaster(bId: String!, bName: String): Boolean!
+}
+
+type Query {
+  setBroadcaster: Boolean!
+}
