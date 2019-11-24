@@ -22,9 +22,9 @@ watchurs-backend
 
 - [x] 브로드캐스터 정보 생성 - [수정예정](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Broadcaster/setBroadcaster/setBroadcaster.js)
 - [x] 브로드캐스터 정보 변경 - [수정예정](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Broadcaster/setBroadcaster/setBroadcaster.js)
-- [x] 소환사 랭크 정보 생성 - [수정예정](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Summoner/setSummoner/setSummoner.js)
-- [x] 소환사 랭크 정보 변경 - [수정예정](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Summoner/setSummoner/setSummoner.js)
-- [ ] 브로드캐스터 - 소환사 정보 등록
+- [x] 소환사 랭크 정보 생성 - [수정완료](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Summoner/setSummoner/setSummoner.js)
+- [x] 소환사 랭크 정보 변경 - [수정완료](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Summoner/setSummoner/setSummoner.js)
+- [x] 브로드캐스터 - 소환사 정보 등록 - [수정완료](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Summoner/setSummoner/setSummoner.js)
 - [ ] 브로드캐스터 정보 생성 승인
 - [ ] 브로드캐스터 정보 수정 승인
 - [ ] 대회 생성

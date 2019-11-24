@@ -1,5 +1,11 @@
+enum Platform {
+  TWITCH
+  AFREECATV
+  YOUTUBE
+}
+
 type Mutation {
-  setBroadcaster(bId: String!, bName: String): Boolean!
+  setBroadcaster(bId: String!, bName: String!, bPlatform: Platform!): Boolean!
 }
 
 type Query {

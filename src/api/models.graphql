@@ -9,6 +9,7 @@ type Broadcaster {
   id: ID!
   bId: String!
   bName: String!
+  bPlatform: String!
   bSummoner: Summoner
   createdAt: String!
   updatedAt: String!
@@ -18,9 +19,9 @@ type Summoner {
   id: ID!
   sId: String!
   sName: String!
-  sTier: String!
-  sRank: String!
-  sPoints: Int!
+  sTier: String
+  sRank: String
+  sPoints: Int
   sWins: Int
   sLosses: Int
   sBroadcaster: Broadcaster

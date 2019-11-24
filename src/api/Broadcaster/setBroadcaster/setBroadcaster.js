@@ -19,19 +19,19 @@ import { prisma } from "../../../../generated/prisma";
 export default {
   Mutation: {
     setBroadcaster: async (_, args) => {
-      const { bId, bName } = args;
+      const { bId, bName, bPlatform } = args;
       const existBroadcaster = await prisma.$exists.broadcaster({ bId });
       // 조건 1: 등록된 브로드캐스터
       if (existBroadcaster) {
-        const [{ id, bName: preBName }] = await prisma.broadcasters({
+        const [{ id, bName: bNameS, bPlatform }] = await prisma.broadcasters({
           where: { bId }
         });
         // 조건 1-1: 브로드캐스터 이름 변경
-        if (bName !== undefined && bName !== "" && preBName !== bName) {
+        if (bName !== undefined && bName !== "" && bNameS !== bName) {
           try {
             await prisma.updateBroadcaster({
               where: { id },
-              data: { bName }
+              data: { bName, bPlatform }
             });
             return true;
           } catch (e) {
@@ -44,7 +44,7 @@ export default {
         // 조건 2: 등록되지 않은 브로드캐스터
       } else {
         try {
-          await prisma.createBroadcaster({ bId, bName });
+          await prisma.createBroadcaster({ bId, bName, bPlatform });
           return true;
         } catch (e) {
           console.log(e);

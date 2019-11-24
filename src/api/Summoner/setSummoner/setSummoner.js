@@ -16,15 +16,46 @@ import axios from "axios";
  * 조건 2-2 : 랭크 정보가 없는 소환사
  * ================================================================
  * 수정 예정
- * api 사용 시 sId 가 아닌 sName으로 찾을 수 있도록 변경
  * ================================================================
  */
+
+// 랭크 정보가 있는 소환사 데이터
+const getRankedData = async (sId, RIOT_API) => {
+  const { data } = await axios.get(
+    `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${sId}?api_key=${RIOT_API}`
+  );
+  console.log(data[0].queueType);
+  if (data[0].queueType === "RANKED_SOLO_5x5") {
+    console.log(data[0]);
+    return data[0];
+  } else {
+    console.log(data[1]);
+    return data[1];
+  }
+};
+
+// 랭크 정보가 없는 소환사 데이터
+const getUnrankedData = async (sId, RIOT_API) => {
+  const { data } = await axios.get(
+    `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
+  );
+  return data;
+};
 
 export default {
   Mutation: {
     setSummoner: async (_, args) => {
-      const { sId } = args;
+      const { sNameS, bId, bName } = args;
       const RIOT_API = process.env.RIOT_API;
+      const bInfo = await prisma.broadcasters({
+        where: { AND: [{ bId }, { bName }] }
+      });
+      const encodedSNameS = encodeURIComponent(sNameS);
+      const {
+        data: { id: sId }
+      } = await axios.get(
+        `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodedSNameS}?api_key=${RIOT_API}`
+      );
       const existSummoner = await prisma.$exists.summoner({ sId });
       // 조건 1 : 등록된 소환사 ID
       if (existSummoner) {
@@ -33,42 +64,38 @@ export default {
           // 조건 1-1 : 랭크 정보가 있는 소환사
           try {
             const {
-              data: [
-                ,
-                {
-                  summonerName: sName,
-                  tier: sTier,
-                  rank: sRank,
-                  leaguePoints: sPoints,
-                  wins: sWins,
-                  losses: sLosses
-                }
-              ]
-            } = await axios.get(
-              `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${sId}?api_key=${RIOT_API}`
-            );
+              summonerName: sName,
+              tier: sTier,
+              rank: sRank,
+              leaguePoints: sPoints,
+              wins: sWins,
+              losses: sLosses
+            } = await getRankedData(sId, RIOT_API);
             await prisma.updateSummoner({
               where: { id },
               data: {
+                sId,
                 sName,
                 sTier,
                 sRank,
                 sPoints,
                 sWins,
-                sLosses
+                sLosses,
+                sBroadcaster: { connect: { id: bInfo[0].id } }
               }
             });
+            return true;
           } catch (e) {
             // 조건 1-2 : 랭크 정보가 없는 소환사
             try {
-              const {
-                data: { name: sName }
-              } = await axios.get(
-                `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
-              );
+              const { name: sName } = await getUnrankedData(sId, RIOT_API);
               await prisma.updateSummoner({
                 where: { id },
-                data: { sName }
+                data: {
+                  sId,
+                  sName,
+                  sBroadcaster: { connect: { id: bInfo[0].id } }
+                }
               });
               return true;
             } catch (e) {
@@ -86,20 +113,13 @@ export default {
           // 조건 2-1 : 랭크 정보가 있는 소환사
           try {
             const {
-              data: [
-                ,
-                {
-                  summonerName: sName,
-                  tier: sTier,
-                  rank: sRank,
-                  leaguePoints: sPoints,
-                  wins: sWins,
-                  losses: sLosses
-                }
-              ]
-            } = await axios.get(
-              `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${sId}?api_key=${RIOT_API}`
-            );
+              summonerName: sName,
+              tier: sTier,
+              rank: sRank,
+              leaguePoints: sPoints,
+              wins: sWins,
+              losses: sLosses
+            } = await getRankedData(sId, RIOT_API);
             await prisma.createSummoner({
               sId,
               sName,
@@ -107,19 +127,18 @@ export default {
               sRank,
               sPoints,
               sWins,
-              sLosses
+              sLosses,
+              sBroadcaster: { connect: { id: bInfo[0].id } }
             });
+            return true;
           } catch (e) {
             // 조건 2-2 : 랭크 정보가 없는 소환사
             try {
-              const {
-                data: { name: sName }
-              } = await axios.get(
-                `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
-              );
+              const { name: sName } = await getUnrankedData(sId, RIOT_API);
               await prisma.createSummoner({
                 sId,
-                sName
+                sName,
+                sBroadcaster: { connect: { id: bInfo[0].id } }
               });
               return true;
             } catch (e) {

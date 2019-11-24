@@ -9,6 +9,7 @@ type Broadcaster {
   id: ID! @id
   bId: String!
   bName: String!
+  bPlatform: String!
   bSummoner: Summoner @relation(link: INLINE name: "SummonerOfBroadcaster" onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -18,11 +19,11 @@ type Summoner {
   id: ID! @id
   sId: String!
   sName: String!
-  sTier: String! @default(value:"Unranked")
-  sRank: String! @default(value:"Unranked")
-  sPoints: Int!
-  sWins: Int!
-  sLosses: Int!
+  sTier: String @default(value:"Unranked")
+  sRank: String @default(value:"Unranked")
+  sPoints: Int @default(value:0)
+  sWins: Int @default(value:0)
+  sLosses: Int @default(value:0)
   sBroadcaster: Broadcaster @relation(name: "SummonerOfBroadcaster")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
