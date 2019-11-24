@@ -2,7 +2,7 @@ import { prisma } from "../../../../generated/prisma";
 
 /**
  * ================================================================
- * 브로드캐스터 단일 조회
+ * 브로드캐스터 전체 조회
  * ================================================================
  * 수정예정
  * ================================================================
@@ -10,9 +10,8 @@ import { prisma } from "../../../../generated/prisma";
 
 export default {
   Query: {
-    seeBroadcaster: async (_, args) => {
-      const { bName } = args;
-      return await prisma.broadcaster({ bName });
+    seeAllBroadcaster: async (_, __) => {
+      return await prisma.broadcasters();
     }
   }
 };

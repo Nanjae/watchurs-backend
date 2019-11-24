@@ -8,8 +8,9 @@ watchurs-backend
 
 ### 사용자
 
-- [x] 브로드캐스터 정보 조회
-- [ ] 브로드캐스터 검색
+- [x] 브로드캐스터 단일 조회 - [수정완료](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Broadcaster/seeBroadcaster/seeBroadcaster.js)
+- [x] 브로드캐스터 전체 조회 - [수정완료](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Broadcaster/seeAllBroadcaster/seeAllBroadcaster.js)
+- [x] 브로드캐스터 검색 - [수정완료](https://github.com/Nanjae/watchurs-backend/blob/master/src/api/Broadcaster/searchBroadcaster/searchBroadcaster.js)
 - [ ] 로그인
 - [ ] 로그아웃
 - [ ] 즐겨찾기 기본 - 토글
