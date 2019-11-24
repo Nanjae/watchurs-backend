@@ -7,8 +7,8 @@ type User {
 
 type Broadcaster {
   id: ID! @id
-  bId: String!
-  bName: String!
+  bId: String! @unique
+  bName: String! @unique
   bPlatform: String!
   bSummoner: Summoner @relation(link: INLINE name: "SummonerOfBroadcaster" onDelete: CASCADE)
   createdAt: DateTime! @createdAt
