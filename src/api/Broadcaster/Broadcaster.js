@@ -1,4 +1,4 @@
-import { prisma } from "../../../generated/prisma";
+import { prisma } from "../../../generated/prisma-client";
 
 export default {
   Broadcaster: {
