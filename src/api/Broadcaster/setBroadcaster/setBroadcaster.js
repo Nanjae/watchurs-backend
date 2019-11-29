@@ -1,4 +1,5 @@
 import { prisma } from "../../../../generated/prisma-client";
+import axios from "axios";
 
 /**
  * ================================================================
@@ -16,35 +17,46 @@ import { prisma } from "../../../../generated/prisma-client";
  * ================================================================
  */
 
+const getBroadcasterData = async (bId, TWITCH_CID) => {
+  try {
+    return await axios.get(`https://api.twitch.tv/helix/users?login=${bId}`, {
+      headers: { "Client-ID": TWITCH_CID }
+    });
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
 export default {
   Mutation: {
     setBroadcaster: async (_, args) => {
-      const { bId, bName, bPlatform } = args;
+      const TWITCH_CID = process.env.TWITCH_CID;
+      const { bId, bPlatform } = args;
       const existBroadcaster = await prisma.$exists.broadcaster({ bId });
+      const {
+        data: {
+          data: [{ display_name: bName, profile_image_url: bAvatar }]
+        }
+      } = await getBroadcasterData(bId, TWITCH_CID);
       // 조건 1: 등록된 브로드캐스터
       if (existBroadcaster) {
-        const [{ id, bName: bNameS, bPlatform }] = await prisma.broadcasters({
-          where: { bId }
-        });
-        // 조건 1-1: 브로드캐스터 이름 변경
-        if (bName !== undefined && bName !== "" && bNameS !== bName) {
-          try {
-            await prisma.updateBroadcaster({
-              where: { id },
-              data: { bName, bPlatform }
-            });
-            return true;
-          } catch (e) {
-            console.log(e);
-            return false;
-          }
-        } else {
+        const { id } = await prisma.broadcaster({ bId });
+        // 조건 1-1: 브로드캐스터 정보 변경
+        try {
+          await prisma.updateBroadcaster({
+            where: { id },
+            data: { bName, bPlatform, bAvatar }
+          });
+          return true;
+        } catch (e) {
+          console.log(e);
           return false;
         }
         // 조건 2: 등록되지 않은 브로드캐스터
       } else {
         try {
-          await prisma.createBroadcaster({ bId, bName, bPlatform });
+          await prisma.createBroadcaster({ bId, bName, bPlatform, bAvatar });
           return true;
         } catch (e) {
           console.log(e);

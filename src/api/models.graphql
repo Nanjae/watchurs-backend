@@ -9,6 +9,7 @@ type Broadcaster {
   id: ID!
   bId: String!
   bName: String!
+  bAvatar: String!
   bPlatform: String!
   bSummoner: Summoner
   createdAt: String!

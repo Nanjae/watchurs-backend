@@ -5,5 +5,5 @@ enum Platform {
 }
 
 type Mutation {
-  setBroadcaster(bId: String!, bName: String!, bPlatform: Platform!): Boolean!
+  setBroadcaster(bId: String!, bPlatform: Platform!): Boolean!
 }

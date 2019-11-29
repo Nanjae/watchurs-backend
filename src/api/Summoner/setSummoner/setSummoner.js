@@ -21,16 +21,18 @@ import axios from "axios";
 
 // 랭크 정보가 있는 소환사 데이터
 const getRankedData = async (sId, RIOT_API) => {
-  const { data } = await axios.get(
-    `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${sId}?api_key=${RIOT_API}`
-  );
-  console.log(data[0].queueType);
-  if (data[0].queueType === "RANKED_SOLO_5x5") {
-    console.log(data[0]);
-    return data[0];
-  } else {
-    console.log(data[1]);
-    return data[1];
+  try {
+    const { data } = await axios.get(
+      `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${sId}?api_key=${RIOT_API}`
+    );
+    if (data[0].queueType === "RANKED_SOLO_5x5") {
+      return data[0];
+    } else {
+      return data[1];
+    }
+  } catch (e) {
+    console.log(e);
+    return false;
   }
 };
 
