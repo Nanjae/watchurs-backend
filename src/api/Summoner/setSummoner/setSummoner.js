@@ -32,6 +32,12 @@ const getRankedData = async (sId, RIOT_API) => {
     if (data[1].queueType === "RANKED_SOLO_5x5") {
       return data[1];
     }
+    if (data[2].queueType === "RANKED_SOLO_5x5") {
+      return data[2];
+    }
+    if (data[3].queueType === "RANKED_SOLO_5x5") {
+      return data[3];
+    }
     return;
   } catch (e) {
     console.log(e);
@@ -50,11 +56,9 @@ const getUnrankedData = async (sId, RIOT_API) => {
 export default {
   Mutation: {
     setSummoner: async (_, args) => {
-      const { sNameS, bId, bName } = args;
+      const { sNameS, bId } = args;
       const RIOT_API = process.env.RIOT_API;
-      const bInfo = await prisma.broadcasters({
-        where: { AND: [{ bId }, { bName }] }
-      });
+      const bInfo = await prisma.broadcaster({ bId });
       const encodedSNameS = encodeURIComponent(sNameS);
       const {
         data: { id: sId, profileIconId: sAvatar }
@@ -87,7 +91,7 @@ export default {
                 sPoints,
                 sWins,
                 sLosses,
-                sBroadcaster: { connect: { id: bInfo[0].id } }
+                sBroadcaster: { connect: { id: bInfo.id } }
               }
             });
             return true;
@@ -101,7 +105,7 @@ export default {
                   sId,
                   sName,
                   sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
-                  sBroadcaster: { connect: { id: bInfo[0].id } }
+                  sBroadcaster: { connect: { id: bInfo.id } }
                 }
               });
               return true;
@@ -136,7 +140,7 @@ export default {
               sPoints,
               sWins,
               sLosses,
-              sBroadcaster: { connect: { id: bInfo[0].id } }
+              sBroadcaster: { connect: { id: bInfo.id } }
             });
             return true;
           } catch (e) {
@@ -147,7 +151,7 @@ export default {
                 sId,
                 sName,
                 sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
-                sBroadcaster: { connect: { id: bInfo[0].id } }
+                sBroadcaster: { connect: { id: bInfo.id } }
               });
               return true;
             } catch (e) {
