@@ -65,6 +65,7 @@ export default {
       } = await axios.get(
         `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodedSNameS}?api_key=${RIOT_API}`
       );
+      const sAvatarUrl = `https://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`;
       const existSummoner = await prisma.$exists.summoner({ sId });
       // 조건 1 : 등록된 소환사 ID
       if (existSummoner) {
@@ -85,7 +86,7 @@ export default {
               data: {
                 sId,
                 sName,
-                sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
+                sAvatar: sAvatarUrl,
                 sTier,
                 sRank,
                 sPoints,
@@ -104,7 +105,7 @@ export default {
                 data: {
                   sId,
                   sName,
-                  sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
+                  sAvatar: sAvatarUrl,
                   sBroadcaster: { connect: { id: bInfo.id } }
                 }
               });
@@ -134,7 +135,7 @@ export default {
             await prisma.createSummoner({
               sId,
               sName,
-              sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
+              sAvatar: sAvatarUrl,
               sTier,
               sRank,
               sPoints,
@@ -150,7 +151,7 @@ export default {
               await prisma.createSummoner({
                 sId,
                 sName,
-                sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
+                sAvatar: sAvatarUrl,
                 sBroadcaster: { connect: { id: bInfo.id } }
               });
               return true;
