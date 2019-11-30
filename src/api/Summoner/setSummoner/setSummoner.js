@@ -25,11 +25,14 @@ const getRankedData = async (sId, RIOT_API) => {
     const { data } = await axios.get(
       `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${sId}?api_key=${RIOT_API}`
     );
+    if (data[0] === undefined) return;
     if (data[0].queueType === "RANKED_SOLO_5x5") {
       return data[0];
-    } else {
+    }
+    if (data[1].queueType === "RANKED_SOLO_5x5") {
       return data[1];
     }
+    return;
   } catch (e) {
     console.log(e);
     return false;
@@ -54,7 +57,7 @@ export default {
       });
       const encodedSNameS = encodeURIComponent(sNameS);
       const {
-        data: { id: sId }
+        data: { id: sId, profileIconId: sAvatar }
       } = await axios.get(
         `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodedSNameS}?api_key=${RIOT_API}`
       );
@@ -78,6 +81,7 @@ export default {
               data: {
                 sId,
                 sName,
+                sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
                 sTier,
                 sRank,
                 sPoints,
@@ -96,6 +100,7 @@ export default {
                 data: {
                   sId,
                   sName,
+                  sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
                   sBroadcaster: { connect: { id: bInfo[0].id } }
                 }
               });
@@ -125,6 +130,7 @@ export default {
             await prisma.createSummoner({
               sId,
               sName,
+              sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
               sTier,
               sRank,
               sPoints,
@@ -140,6 +146,7 @@ export default {
               await prisma.createSummoner({
                 sId,
                 sName,
+                sAvatar: `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`,
                 sBroadcaster: { connect: { id: bInfo[0].id } }
               });
               return true;

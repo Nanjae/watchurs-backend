@@ -9,7 +9,7 @@ type Broadcaster {
   id: ID! @id
   bId: String! @unique
   bName: String! @unique
-  bAvatar: String! @default(value:"https://static-cdn.jtvnw.net/jtv_user_pictures/1e5cf5ba-97cd-426a-a9c9-b634054c4b19-profile_image-300x300.png")
+  bAvatar: String!
   bPlatform: String!
   bSummoner: Summoner @relation(link: INLINE name: "SummonerOfBroadcaster" onDelete: CASCADE)
   createdAt: DateTime! @createdAt
@@ -20,8 +20,9 @@ type Summoner {
   id: ID! @id
   sId: String!
   sName: String!
-  sTier: String @default(value:"Unranked")
-  sRank: String @default(value:"Unranked")
+  sAvatar: String!
+  sTier: String @default(value:"UNRANKED")
+  sRank: String @default(value:"UNRANKED")
   sPoints: Int @default(value:0)
   sWins: Int @default(value:0)
   sLosses: Int @default(value:0)
