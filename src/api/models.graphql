@@ -22,6 +22,7 @@ type Summoner {
   sName: String!
   sAvatar: String!
   sTier: String
+  sTierNum: Int
   sRank: String
   sPoints: Int
   sWins: Int
