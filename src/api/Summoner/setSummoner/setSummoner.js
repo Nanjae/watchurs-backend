@@ -53,6 +53,38 @@ const getUnrankedData = async (sId, RIOT_API) => {
   return data;
 };
 
+const setSTierNum = async sTier => {
+  if (sTier === "CHALLANGER") {
+    sTierNum = 1;
+  }
+  if (sTier === "GRANDMASTER") {
+    sTierNum = 2;
+  }
+  if (sTier === "MASTER") {
+    sTierNum = 3;
+  }
+  if (sTier === "DIAMOND") {
+    sTierNum = 4;
+  }
+  if (sTier === "PLATINUM") {
+    sTierNum = 5;
+  }
+  if (sTier === "GOLD") {
+    sTierNum = 6;
+  }
+  if (sTier === "SILVER") {
+    sTierNum = 7;
+  }
+  if (sTier === "BRONZE") {
+    sTierNum = 8;
+  }
+  if (sTier === "IRON") {
+    sTierNum = 9;
+  }
+};
+
+let sTierNum = 99;
+
 export default {
   Mutation: {
     setSummoner: async (_, args) => {
@@ -81,13 +113,14 @@ export default {
               wins: sWins,
               losses: sLosses
             } = await getRankedData(sId, RIOT_API);
+            setSTierNum(sTier);
             await prisma.updateSummoner({
               where: { id },
               data: {
-                sId,
                 sName,
                 sAvatar: sAvatarUrl,
                 sTier,
+                sTierNum,
                 sRank,
                 sPoints,
                 sWins,
@@ -103,7 +136,6 @@ export default {
               await prisma.updateSummoner({
                 where: { id },
                 data: {
-                  sId,
                   sName,
                   sAvatar: sAvatarUrl,
                   sBroadcaster: { connect: { id: bInfo.id } }
@@ -132,11 +164,13 @@ export default {
               wins: sWins,
               losses: sLosses
             } = await getRankedData(sId, RIOT_API);
+            setSTierNum(sTier);
             await prisma.createSummoner({
               sId,
               sName,
               sAvatar: sAvatarUrl,
               sTier,
+              sTierNum,
               sRank,
               sPoints,
               sWins,
