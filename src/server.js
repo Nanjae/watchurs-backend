@@ -2,10 +2,13 @@ import "./env";
 import { GraphQLServer } from "graphql-yoga";
 import logger from "morgan";
 import schema from "./schema";
+import { serverRefreshSummoner, setIntervalAndExecute } from "./serverFunction";
 
 const PORT = process.env.PORT || 4000;
 
 const server = new GraphQLServer({ schema });
+
+setIntervalAndExecute(serverRefreshSummoner, 1800000);
 
 server.express.use(logger("dev"));
 
