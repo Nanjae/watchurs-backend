@@ -62,8 +62,8 @@ export const serverRefreshSummoner = async () => {
   const summoners = await prisma.summoners();
   const RIOT_API = process.env.RIOT_API;
   let i = 0;
-  console.log(new Date());
-  console.log("===총 " + summoners.length + "회 호출 시작===");
+  // console.log(new Date());
+  // console.log("===총 " + summoners.length + "회 호출 시작===");
   const intervalObj = setInterval(async () => {
     const { id, sId } = summoners[i];
     const {
@@ -114,14 +114,14 @@ export const serverRefreshSummoner = async () => {
         console.log(e);
       }
     }
-    console.log(new Date());
-    console.log(i + 1 + "회 호출 완료");
+    // console.log(new Date());
+    // console.log(i + 1 + "회 호출 완료");
     if (i < summoners.length - 1) {
       i++;
     } else {
       clearInterval(intervalObj);
-      console.log(new Date());
-      console.log("===총 " + (i + 1) + "회 호출 종료===");
+      // console.log(new Date());
+      // console.log("===총 " + (i + 1) + "회 호출 종료===");
     }
   }, 15000);
 };
