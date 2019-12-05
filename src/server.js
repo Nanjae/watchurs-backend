@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 4000;
 
 const server = new GraphQLServer({ schema });
 
-setIntervalAndExecute(serverRefreshSummoner, 1800000);
+// setIntervalAndExecute(serverRefreshSummoner, 1800000);
 
 server.express.use(logger("dev"));
 

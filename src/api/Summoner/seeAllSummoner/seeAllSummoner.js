@@ -11,40 +11,43 @@ import { prisma } from "../../../../generated/prisma-client";
 export default {
   Query: {
     seeAllSummoner: async (_, __) => {
-      const unsortedSummoners = await prisma.summoners();
-
-      let sortBy = [
-        {
-          prop: "sTierNum",
-          direction: 1
-        },
-        {
-          prop: "sRank",
-          direction: 1
-        },
-        {
-          prop: "sPoints",
-          direction: -1
-        }
-      ];
-
-      const sortedSummoners = unsortedSummoners.sort(function(a, b) {
-        let i = 0,
-          result = 0;
-        while (i < sortBy.length && result === 0) {
-          result =
-            sortBy[i].direction *
-            (a[sortBy[i].prop] < b[sortBy[i].prop]
-              ? -1
-              : a[sortBy[i].prop] > b[sortBy[i].prop]
-              ? 1
-              : 0);
-          i++;
-        }
-        return result;
+      // const { sliceNum } = args;
+      const unsortedSummoners = await prisma.summoners({
+        skip: 10,
+        first: 10
       });
+      return unsortedSummoners;
 
-      return sortedSummoners;
+      // let sortBy = [
+      //   {
+      //     prop: "sTierNum",
+      //     direction: 1
+      //   },
+      //   {
+      //     prop: "sRank",
+      //     direction: 1
+      //   },
+      //   {
+      //     prop: "sPoints",
+      //     direction: -1
+      //   }
+      // ];
+
+      // const sortedSummoners = unsortedSummoners.sort(function(a, b) {
+      //   let i = 0,
+      //     result = 0;
+      //   while (i < sortBy.length && result === 0) {
+      //     result =
+      //       sortBy[i].direction *
+      //       (a[sortBy[i].prop] < b[sortBy[i].prop]
+      //         ? -1
+      //         : a[sortBy[i].prop] > b[sortBy[i].prop]
+      //         ? 1
+      //         : 0);
+      //     i++;
+      //   }
+      //   return result;
+      // });
     }
   }
 };
