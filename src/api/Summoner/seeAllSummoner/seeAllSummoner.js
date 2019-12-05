@@ -34,9 +34,9 @@ export default {
         while (i < sortBy.length && result === 0) {
           result =
             sortBy[i].direction *
-            (a[sortBy[i].prop].toString() < b[sortBy[i].prop].toString()
+            (a[sortBy[i].prop] < b[sortBy[i].prop]
               ? -1
-              : a[sortBy[i].prop].toString() > b[sortBy[i].prop].toString()
+              : a[sortBy[i].prop] > b[sortBy[i].prop]
               ? 1
               : 0);
           i++;
