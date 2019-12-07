@@ -31,3 +31,11 @@ type Summoner {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
+
+type LeagueCard{
+  id: ID! @id
+  cName: String!
+  cSummoner:[Summoner!]!
+  createdAt:DateTime! @createdAt
+  updatedAt:DateTime! @updatedAt
+}
