@@ -1,0 +1,3 @@
+type Mutation {
+  setLeagueCard(lCardName: String!): LeagueCard!
+}

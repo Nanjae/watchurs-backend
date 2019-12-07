@@ -11,7 +11,7 @@ type Broadcaster {
   bName: String! @unique
   bAvatar: String!
   bPlatform: String!
-  bSummoner: Summoner @relation(link: INLINE name: "SummonerOfBroadcaster" onDelete: CASCADE)
+  bSummoner: Summoner @relation(name: "SummonerOfBroadcaster" onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -27,15 +27,24 @@ type Summoner {
   sPoints: Int @default(value:0)
   sWins: Int @default(value:0)
   sLosses: Int @default(value:0)
-  sBroadcaster: Broadcaster @relation(name: "SummonerOfBroadcaster")
+  sBroadcaster: Broadcaster! @relation(name: "SummonerOfBroadcaster" link: INLINE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
-type LeagueCard{
+type LeagueCard {
   id: ID! @id
-  cName: String!
-  cSummoner:[Summoner!]!
-  createdAt:DateTime! @createdAt
-  updatedAt:DateTime! @updatedAt
+  lCardName: String!
+  lCardInfo: [CardInfo] @relation(name:"CardBroadcasterOfLeagueCard" onDelete:CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type CardInfo {
+  id: ID! @id
+  cLine: String! @default(value:"none")
+  cBId: String!
+  cLeagueCard: LeagueCard! @relation(name:"CardBroadcasterOfLeagueCard" link: INLINE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }

@@ -27,7 +27,24 @@ type Summoner {
   sPoints: Int
   sWins: Int
   sLosses: Int
-  sBroadcaster: Broadcaster
+  sBroadcaster: Broadcaster!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type LeagueCard {
+  id: ID!
+  lCardName: String!
+  lCardInfo: [CardInfo]
+  createdAt: String!
+  updatedAt: String!
+}
+
+type CardInfo {
+  id: ID!
+  cLine: String!
+  cBId: String!
+  cLeagueCard: LeagueCard!
   createdAt: String!
   updatedAt: String!
 }
