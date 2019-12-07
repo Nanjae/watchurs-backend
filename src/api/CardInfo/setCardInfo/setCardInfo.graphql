@@ -1,0 +1,8 @@
+type Mutation {
+  setCardInfo(
+    cPos: Int!
+    cLine: String!
+    cBId: String!
+    lCardId: String!
+  ): CardInfo!
+}

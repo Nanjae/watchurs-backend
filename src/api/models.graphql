@@ -42,6 +42,7 @@ type LeagueCard {
 
 type CardInfo {
   id: ID!
+  cPos: Int!
   cLine: String!
   cBId: String!
   cLeagueCard: LeagueCard!

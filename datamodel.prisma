@@ -42,7 +42,8 @@ type LeagueCard {
 
 type CardInfo {
   id: ID! @id
-  cLine: String! @default(value:"none")
+  cPos: Int!
+  cLine: String!
   cBId: String!
   cLeagueCard: LeagueCard! @relation(name:"CardBroadcasterOfLeagueCard" link: INLINE)
   createdAt: DateTime! @createdAt
