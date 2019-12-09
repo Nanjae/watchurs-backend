@@ -3,7 +3,7 @@ type User {
   uName: String!
   uEmail: String!
   uPassword: String!
-  uLoginSecret: String
+  uLoginSecret: Int
   uBroadcaster: [Broadcaster!]!
   uLeagueCard: [LeagueCard!]!
   createdAt: String!
