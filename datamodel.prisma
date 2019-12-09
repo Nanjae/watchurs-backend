@@ -1,7 +1,11 @@
 type User {
   id: ID! @id
-  name: String!
-  uLeagueCard: [LeagueCard] @relation(name:"LeagueCardOfUser" onDelete: CASCADE)
+  uName: String! @unique
+  uEmail: String! @unique
+  uPassword: String!
+  uLoginSecret: String
+  uBroadcaster: [Broadcaster!]! @relation(name:"UserOfBroadcaster")
+  uLeagueCard: [LeagueCard!]! @relation(name:"LeagueCardOfUser" onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -9,9 +13,10 @@ type User {
 type Broadcaster {
   id: ID! @id
   bId: String! @unique
-  bName: String! @unique
+  bName: String!
   bAvatar: String!
   bPlatform: String!
+  bUser: [User!]! @relation(name:"UserOfBroadcaster" onDelete: CASCADE)
   bSummoner: Summoner @relation(name: "SummonerOfBroadcaster" onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -19,15 +24,15 @@ type Broadcaster {
 
 type Summoner {
   id: ID! @id
-  sId: String!
+  sId: String! @unique
   sName: String!
   sAvatar: String!
-  sTier: String @default(value:"UNRANKED")
-  sTierNum: Int @default(value:99)
-  sRank: String @default(value:"UNRANKED")
-  sPoints: Int @default(value:0)
-  sWins: Int @default(value:0)
-  sLosses: Int @default(value:0)
+  sTier: String! @default(value:"UNRANKED")
+  sTierNum: Int! @default(value:99)
+  sRank: String! @default(value:"UNRANKED")
+  sPoints: Int! @default(value:0)
+  sWins: Int! @default(value:0)
+  sLosses: Int! @default(value:0)
   sBroadcaster: Broadcaster! @relation(name: "SummonerOfBroadcaster" link: INLINE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -36,7 +41,7 @@ type Summoner {
 type LeagueCard {
   id: ID! @id
   lCardName: String!
-  lCardInfo: [CardInfo] @relation(name:"CardBroadcasterOfLeagueCard" onDelete:CASCADE)
+  lCardInfo: [CardInfo!]! @relation(name:"CardBroadcasterOfLeagueCard" onDelete:CASCADE)
   lUser: User @relation(name:"LeagueCardOfUser" link: INLINE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

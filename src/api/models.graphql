@@ -1,6 +1,11 @@
 type User {
   id: ID!
-  name: String!
+  uName: String!
+  uEmail: String!
+  uPassword: String!
+  uLoginSecret: String
+  uBroadcaster: [Broadcaster!]!
+  uLeagueCard: [LeagueCard!]!
   createdAt: String!
   updatedAt: String!
 }
@@ -11,6 +16,7 @@ type Broadcaster {
   bName: String!
   bAvatar: String!
   bPlatform: String!
+  bUser: [User!]!
   bSummoner: Summoner
   createdAt: String!
   updatedAt: String!
@@ -21,12 +27,12 @@ type Summoner {
   sId: String!
   sName: String!
   sAvatar: String!
-  sTier: String
-  sTierNum: Int
-  sRank: String
-  sPoints: Int
-  sWins: Int
-  sLosses: Int
+  sTier: String!
+  sTierNum: Int!
+  sRank: String!
+  sPoints: Int!
+  sWins: Int!
+  sLosses: Int!
   sBroadcaster: Broadcaster!
   createdAt: String!
   updatedAt: String!
@@ -35,7 +41,8 @@ type Summoner {
 type LeagueCard {
   id: ID!
   lCardName: String!
-  lCardInfo: [CardInfo]
+  lCardInfo: [CardInfo!]!
+  lUser: User
   createdAt: String!
   updatedAt: String!
 }
