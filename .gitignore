@@ -61,3 +61,6 @@ typings/
 .next
 generated
 build
+src/api/User/requestSecret/requestSecret.graphql
+src/api/User/requestSecret/requestSecret.js
+src/utils.js
