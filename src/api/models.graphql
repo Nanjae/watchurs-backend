@@ -3,6 +3,7 @@ type User {
   uName: String!
   uEmail: String!
   uPassword: String!
+  uSalt: String!
   uLoginSecret: Int
   uBroadcaster: [Broadcaster!]!
   uLeagueCard: [LeagueCard!]!

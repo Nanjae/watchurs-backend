@@ -1,4 +1,5 @@
 import { prisma } from "../../../../generated/prisma-client";
+import { saltedPassword } from "../../../crypto";
 
 export default {
   Mutation: {
@@ -11,11 +12,7 @@ export default {
       } else if (existUEmail) {
         throw Error("이미 등록된 이메일 입니다.");
       }
-      await prisma.createUser({
-        uName,
-        uEmail,
-        uPassword
-      });
+      saltedPassword(uName, uEmail, uPassword);
       return true;
     }
   }
