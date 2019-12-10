@@ -12,8 +12,13 @@ export default {
       } else if (existUEmail) {
         throw Error("이미 등록된 이메일 입니다.");
       }
-      saltedPassword(uName, uEmail, uPassword);
-      return true;
+      try {
+        saltedPassword(uName, uEmail, uPassword);
+        return true;
+      } catch (e) {
+        console.log(e);
+        return false;
+      }
     }
   }
 };

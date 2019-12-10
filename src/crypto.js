@@ -26,6 +26,31 @@ export const saltedPassword = (uName, uEmail, uPassword) => {
   });
 };
 
+export const editPassword = (uName, uEmail, uPassword) => {
+  crypto.randomBytes(64, (err, buf) => {
+    crypto.pbkdf2(
+      uPassword,
+      buf.toString("base64"),
+      CRYPTO_REPEAT_TIME,
+      64,
+      "sha512",
+      async (err, key) => {
+        if (err) {
+          throw err;
+        }
+        await prisma.updateUser({
+          where: { uEmail },
+          data: {
+            uName,
+            uPassword: key.toString("base64"),
+            uSalt: buf.toString("base64")
+          }
+        });
+      }
+    );
+  });
+};
+
 export const comparePassword = async (password, uPassword, uSalt) => {
   const cryptoPassword = crypto
     .pbkdf2Sync(password, uSalt, CRYPTO_REPEAT_TIME, 64, "sha512")
