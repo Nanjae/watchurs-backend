@@ -26,6 +26,7 @@ type Broadcaster {
 type Summoner {
   id: ID!
   sId: String!
+  sAccountId: String!
   sName: String!
   sAvatar: String!
   sTier: String!
@@ -34,7 +35,25 @@ type Summoner {
   sPoints: Int!
   sWins: Int!
   sLosses: Int!
+  sDetail: [Detail]
   sBroadcaster: Broadcaster!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Detail {
+  id: ID!
+  dGameId: String!
+  dGameMode: String
+  dGameType: String
+  dLane: String
+  dRole: String
+  dKills: Int
+  dDeaths: Int
+  dAssists: Int
+  dWins: Int
+  dChampionId: Int
+  dSummoner: Summoner!
   createdAt: String!
   updatedAt: String!
 }

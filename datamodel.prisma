@@ -26,6 +26,7 @@ type Broadcaster {
 type Summoner {
   id: ID! @id
   sId: String! @unique
+  sAccountId: String @unique
   sName: String!
   sAvatar: String!
   sTier: String! @default(value:"UNRANKED")
@@ -34,7 +35,25 @@ type Summoner {
   sPoints: Int! @default(value:0)
   sWins: Int! @default(value:0)
   sLosses: Int! @default(value:0)
+  sDetail: [Detail] @relation(name: "DetailOfSummoner" onDelete: CASCADE)
   sBroadcaster: Broadcaster! @relation(name: "SummonerOfBroadcaster" link: INLINE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Detail {
+  id: ID! @id
+  dGameId: String!
+  dGameMode: String
+  dGameType: String
+  dLane: String
+  dRole: String
+  dKills: Int
+  dDeaths: Int
+  dAssists: Int
+  dWins: Int
+  dChampionId: Int
+  dSummoner: Summoner! @relation(name: "DetailOfSummoner" link: INLINE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

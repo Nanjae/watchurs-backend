@@ -1,0 +1,3 @@
+type Mutation {
+  addSummoner(sNameS: String!, bId: String!): Boolean!
+}
