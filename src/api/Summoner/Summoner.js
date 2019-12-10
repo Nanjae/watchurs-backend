@@ -2,6 +2,7 @@ import { prisma } from "../../../generated/prisma-client";
 
 export default {
   Summoner: {
-    sBroadcaster: ({ id }) => prisma.summoner({ id }).sBroadcaster()
+    sBroadcaster: ({ id }) => prisma.summoner({ id }).sBroadcaster(),
+    sDetail: ({ id }) => prisma.summoner({ id }).sDetail()
   }
 };
