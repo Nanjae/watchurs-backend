@@ -2,7 +2,8 @@ import { prisma } from "../../../../generated/prisma-client";
 
 export default {
   Mutation: {
-    editUsername: async (_, args) => {
+    editUsername: async (_, args, { request, isAuthenticated }) => {
+      isAuthenticated(request);
       const { uEmail, uName } = args;
       const existUName = await prisma.$exists.user({ where: { uEmail } });
       if (existUName) {
