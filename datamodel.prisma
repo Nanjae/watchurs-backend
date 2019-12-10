@@ -4,7 +4,7 @@ type User {
   uEmail: String! @unique
   uPassword: String!
   uSalt: String!
-  uLoginSecret: Int
+  uLoginSecret: String
   uBroadcaster: [Broadcaster!]! @relation(name:"UserOfBroadcaster")
   uLeagueCard: [LeagueCard!]! @relation(name:"LeagueCardOfUser" onDelete: CASCADE)
   createdAt: DateTime! @createdAt

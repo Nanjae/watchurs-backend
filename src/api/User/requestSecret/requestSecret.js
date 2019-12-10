@@ -5,7 +5,9 @@ export default {
   Mutation: {
     requestSecret: async (_, args) => {
       const { uEmail } = args;
-      const uLoginSecret = Math.floor(100000 + Math.random() * 900000);
+      const uLoginSecret = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
       try {
         await sendSecretMail(uEmail, uLoginSecret);
         await prisma.updateUser({ data: { uLoginSecret }, where: { uEmail } });
