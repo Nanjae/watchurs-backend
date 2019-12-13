@@ -77,8 +77,8 @@ export const serverRefresh = async () => {
   await delayAPI("전체 호출 시작");
   const summoners = await prisma.summoners();
   const RIOT_API = process.env.RIOT_API;
-  let count = 7;
-  const MAX_COUNT = 9;
+  let count = 0;
+  const MAX_COUNT = summoners.length;
   while (count < MAX_COUNT) {
     await delayAPI(count + 1 + "회 호출 시작");
     const sId = summoners[count].sId;
