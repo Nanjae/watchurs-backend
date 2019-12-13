@@ -212,20 +212,6 @@ export default {
             }
           }
         });
-        // await prisma.updateDetail({
-        //   where: {},
-        //   data: {
-        //     dGameMode: gameMode,
-        //     dGameType: gameType,
-        //     dLane: participants[arrayIndex].timeline.lane,
-        //     dRole: participants[arrayIndex].timeline.role,
-        //     dKills: participants[arrayIndex].stats.kills,
-        //     dDeaths: participants[arrayIndex].stats.deaths,
-        //     dAssists: participants[arrayIndex].stats.assists,
-        //     dWins: participants[arrayIndex].stats.win,
-        //     dChampionId: participants[arrayIndex].championId
-        //   }
-        // });
       }
       await delayAPI("호출 종료");
 

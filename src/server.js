@@ -2,7 +2,10 @@ import "./env";
 import { GraphQLServer } from "graphql-yoga";
 import logger from "morgan";
 import schema from "./schema";
-import { serverRefreshSummoner, setIntervalAndExecute } from "./serverFunction";
+import {
+  refreshState,
+  serverRefresh
+} from "../src/serverFunctions/refreshSummoner";
 import { athenticateJwt } from "./passport";
 import { isAuthenticated } from "./middlewares";
 
@@ -13,7 +16,11 @@ const server = new GraphQLServer({
   context: ({ request }) => ({ request, isAuthenticated })
 });
 
-// setIntervalAndExecute(serverRefreshSummoner, 1800000);
+setInterval(() => {
+  if (!refreshState) {
+    serverRefresh();
+  }
+}, 5000);
 
 server.express.use(logger("dev"));
 server.express.use(athenticateJwt);
