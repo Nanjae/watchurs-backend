@@ -1,4 +1,4 @@
-import { prisma } from "../../generated/prisma-client";
+import { prisma } from "../generated/prisma-client";
 import axios from "axios";
 
 // 랭크 정보가 있는 소환사 데이터
