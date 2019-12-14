@@ -65,7 +65,7 @@ const delayAPI = item => {
       console.log(new Date());
       console.log(item);
       resolve();
-    }, 3000)
+    }, parseInt(process.env.INTERVAL_TIME))
   );
 };
 

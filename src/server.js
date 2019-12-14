@@ -17,7 +17,7 @@ setInterval(() => {
   if (!refreshState) {
     serverRefresh();
   }
-}, 5000);
+}, 10000);
 
 server.express.use(logger("dev"));
 server.express.use(athenticateJwt);
