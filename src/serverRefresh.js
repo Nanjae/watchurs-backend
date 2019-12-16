@@ -88,7 +88,7 @@ export const serverRefresh = async () => {
       `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
     );
     await delayAPI(count + 1 + "회 소환사 기본정보 호출 완료");
-    const sAvatarUrl = `https://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`;
+    const sAvatarUrl = `https://ddragon.leagueoflegends.com/cdn/9.24.2/img/profileicon/${sAvatar}.png`;
     try {
       const {
         tier: sTier,
