@@ -186,7 +186,7 @@ export const serverRefresh = async () => {
     });
 
     delGameId.map(async del => {
-      prisma.updateSummoner({
+      await prisma.updateSummoner({
         where: { sId },
         data: { sDetail: { deleteMany: { dGameId: del } } }
       });

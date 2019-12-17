@@ -142,6 +142,8 @@ export default {
         });
       }
 
+      console.log(preGameId);
+
       const {
         data: { matches }
       } = await axios.get(
@@ -175,7 +177,7 @@ export default {
       });
 
       delGameId.map(async del => {
-        prisma.updateSummoner({
+        await prisma.updateSummoner({
           where: { sId },
           data: { sDetail: { deleteMany: { dGameId: del } } }
         });
