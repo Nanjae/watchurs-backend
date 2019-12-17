@@ -81,6 +81,13 @@ export const serverRefresh = async () => {
   const MAX_COUNT = summoners.length;
   while (count < MAX_COUNT) {
     await delayAPI(count + 1 + "회 호출 시작");
+
+    const {
+      data: {
+        n: { champion: vChampion, profileicon: vAvatar }
+      }
+    } = await axios.get("https://ddragon.leagueoflegends.com/realms/kr.json");
+
     const sId = summoners[count].sId;
     const {
       data: { name: sName, profileIconId: sAvatar, accountId: sAccountId }
@@ -88,7 +95,7 @@ export const serverRefresh = async () => {
       `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
     );
     await delayAPI(count + 1 + "회 소환사 기본정보 호출 완료");
-    const sAvatarUrl = `https://ddragon.leagueoflegends.com/cdn/9.24.2/img/profileicon/${sAvatar}.png`;
+    const sAvatarUrl = `https://ddragon.leagueoflegends.com/cdn/${vAvatar}/img/profileicon/${sAvatar}.png`;
     try {
       const {
         tier: sTier,
@@ -152,6 +159,7 @@ export const serverRefresh = async () => {
         preGameId[index] = detail.dGameId;
       });
     }
+    console.log("이전20" + newGameId);
 
     const {
       data: { matches }
@@ -163,34 +171,37 @@ export const serverRefresh = async () => {
     matches.map((match, index) => {
       newGameId[index] = match.gameId.toString();
     });
+    console.log("최근20" + newGameId);
 
     for (let i = 0; i < newGameId.length; i++) {
       if (preGameId.indexOf(newGameId[i]) === -1) {
         addGameId = addGameId.concat(newGameId[i]);
       }
     }
-    // console.log(addGameId);
+    console.log("추가예정" + addGameId);
 
     for (let i = 0; i < preGameId.length; i++) {
       if (newGameId.indexOf(preGameId[i]) === -1) {
         delGameId = delGameId.concat(preGameId[i]);
       }
     }
-    // console.log(delGameId);
+    console.log("삭제예정" + delGameId);
 
-    addGameId.map(async add => {
-      await prisma.createDetail({
-        dGameId: add,
-        dSummoner: { connect: { sId } }
+    if (addGameId.length > 0)
+      addGameId.map(async add => {
+        await prisma.createDetail({
+          dGameId: add,
+          dSummoner: { connect: { sId } }
+        });
       });
-    });
 
-    delGameId.map(async del => {
-      await prisma.updateSummoner({
-        where: { sId },
-        data: { sDetail: { deleteMany: { dGameId: del } } }
+    if (existSDetail)
+      delGameId.map(async del => {
+        await prisma.updateSummoner({
+          where: { sId },
+          data: { sDetail: { deleteMany: { dGameId: del } } }
+        });
       });
-    });
 
     await delayAPI(
       count + 1 + "회 소환사 디테일 " + addGameId.length + "번 호출 시작"
@@ -208,6 +219,22 @@ export const serverRefresh = async () => {
       const arrayIndex = participantIdentities.findIndex(
         x => x.player.accountId === sAccountId
       );
+
+      const {
+        data: { data: championJson }
+      } = await axios.get(
+        `http://ddragon.leagueoflegends.com/cdn/${vChampion}/data/ko_KR/champion.json`
+      );
+
+      const pickedChampion = Object.values(championJson).filter(
+        x => x.key === participants[arrayIndex].championId.toString()
+      );
+
+      const championId = pickedChampion[0].id;
+      const championName = pickedChampion[0].name;
+
+      const championAvatar = `http://ddragon.leagueoflegends.com/cdn/${vChampion}/img/champion/${championId}.png`;
+
       await prisma.updateSummoner({
         where: { sId },
         data: {
@@ -223,7 +250,8 @@ export const serverRefresh = async () => {
                 dDeaths: participants[arrayIndex].stats.deaths,
                 dAssists: participants[arrayIndex].stats.assists,
                 dWins: participants[arrayIndex].stats.win,
-                dChampionId: participants[arrayIndex].championId
+                dChampionName: championName,
+                dChampionAvatar: championAvatar
               }
             }
           }

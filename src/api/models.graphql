@@ -52,7 +52,8 @@ type Detail {
   dDeaths: Int
   dAssists: Int
   dWins: Boolean
-  dChampionId: Int
+  dChampionName: String
+  dChampionAvatar: String
   dSummoner: Summoner!
   createdAt: String!
   updatedAt: String!

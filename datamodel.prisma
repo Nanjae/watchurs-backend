@@ -52,7 +52,8 @@ type Detail {
   dDeaths: Int
   dAssists: Int
   dWins: Boolean
-  dChampionId: Int
+  dChampionName: String
+  dChampionAvatar: String
   dSummoner: Summoner! @relation(name: "DetailOfSummoner" link: INLINE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
