@@ -159,7 +159,7 @@ export const serverRefresh = async () => {
         preGameId[index] = detail.dGameId;
       });
     }
-    console.log("이전20" + newGameId);
+    // console.log("이전20" + newGameId);
 
     const {
       data: { matches }
@@ -171,21 +171,21 @@ export const serverRefresh = async () => {
     matches.map((match, index) => {
       newGameId[index] = match.gameId.toString();
     });
-    console.log("최근20" + newGameId);
+    // console.log("최근20" + newGameId);
 
     for (let i = 0; i < newGameId.length; i++) {
       if (preGameId.indexOf(newGameId[i]) === -1) {
         addGameId = addGameId.concat(newGameId[i]);
       }
     }
-    console.log("추가예정" + addGameId);
+    // console.log("추가예정" + addGameId);
 
     for (let i = 0; i < preGameId.length; i++) {
       if (newGameId.indexOf(preGameId[i]) === -1) {
         delGameId = delGameId.concat(preGameId[i]);
       }
     }
-    console.log("삭제예정" + delGameId);
+    // console.log("삭제예정" + delGameId);
 
     if (addGameId.length > 0)
       addGameId.map(async add => {
