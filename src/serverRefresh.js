@@ -198,7 +198,7 @@ export const serverRefresh = async () => {
     if (existSDetail) {
       await prisma.updateSummoner({
         where: { sId },
-        data: { sDetail: { deleteMany: { dWins: null } } }
+        data: { sDetail: { deleteMany: { dLane: null } } }
       });
       existSDetail = await prisma.$exists.detail({ dSummoner: { sId } });
     }
@@ -572,6 +572,10 @@ export const serverRefresh = async () => {
                 where: { dGameId: addGameId[i] },
                 data: {
                   dGameDuration: dataGameDuration,
+                  dChampionName: championName,
+                  dChampionAvatar: championAvatar,
+                  dParticipantId: arrayIndex + 1,
+                  dLane: laneFrame,
                   dWins: { set: ["rematch", "rematch"] }
                 }
               }
