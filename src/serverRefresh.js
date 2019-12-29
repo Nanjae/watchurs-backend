@@ -194,22 +194,21 @@ export const serverRefresh = async () => {
     let addGameId = new Array();
     let delGameId = new Array();
 
-    let existSDetail = await prisma.$exists.detail({ dSummoner: { sId } });
-    if (existSDetail) {
-      await prisma.updateSummoner({
-        where: { sId },
-        data: { sDetail: { deleteMany: { dLane: null } } }
-      });
-      existSDetail = await prisma.$exists.detail({ dSummoner: { sId } });
-    }
-
+    const existSDetail = await prisma.$exists.detail({ dSummoner: { sId } });
     if (existSDetail) {
       const preDetail = await prisma.summoner({ sId }).sDetail();
-      preDetail.map((detail, index) => {
-        preGameId[index] = detail.dGameId;
+      preDetail.map(async (detail, index) => {
+        if (detail.dLane !== null) {
+          preGameId[index] = detail.dGameId;
+        } else if (detail.dLane === null) {
+          await prisma.updateSummoner({
+            where: { sId },
+            data: { sDetail: { deleteMany: { dGameId: detail.dGameId } } }
+          });
+        }
       });
     }
-    // console.log("이전20" + newGameId);
+    // console.log("이전20" + preGameId);
 
     let dataMatches;
 
@@ -246,26 +245,30 @@ export const serverRefresh = async () => {
 
     for (let i = 0; i < preGameId.length; i++) {
       if (newGameId.indexOf(preGameId[i]) === -1) {
-        delGameId = delGameId.concat(preGameId[i]);
+        if (preGameId[i] !== undefined) {
+          delGameId = delGameId.concat(preGameId[i]);
+        }
       }
     }
     // console.log("삭제예정" + delGameId);
 
-    if (addGameId.length > 0)
+    if (addGameId.length > 0) {
       addGameId.map(async add => {
         await prisma.createDetail({
           dGameId: add,
           dSummoner: { connect: { sId } }
         });
       });
+    }
 
-    if (existSDetail)
+    if (delGameId.length > 0) {
       delGameId.map(async del => {
         await prisma.updateSummoner({
           where: { sId },
           data: { sDetail: { deleteMany: { dGameId: del } } }
         });
       });
+    }
 
     await delayAPI(
       count + 1 + "회 소환사 디테일 " + addGameId.length + "번 호출 시작"
