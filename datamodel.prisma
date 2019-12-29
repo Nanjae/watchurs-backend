@@ -1,23 +1,9 @@
-type User {
-  id: ID! @id
-  uName: String! @unique
-  uEmail: String! @unique
-  uPassword: String!
-  uSalt: String!
-  uLoginSecret: String
-  uBroadcaster: [Broadcaster!]! @relation(name:"UserOfBroadcaster")
-  uLeagueCard: [LeagueCard!]! @relation(name:"LeagueCardOfUser" onDelete: CASCADE)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
 type Broadcaster {
   id: ID! @id
   bId: String! @unique
   bName: String!
   bAvatar: String!
   bPlatform: String!
-  bUser: [User!]! @relation(name:"UserOfBroadcaster" onDelete: CASCADE)
   bSummoner: Summoner @relation(name: "SummonerOfBroadcaster" onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -26,7 +12,7 @@ type Broadcaster {
 type Summoner {
   id: ID! @id
   sId: String! @unique
-  sAccountId: String @unique
+  sAccountId: String! @unique
   sName: String!
   sAvatar: String!
   sTier: String! @default(value:"UNRANKED")
@@ -44,36 +30,58 @@ type Summoner {
 type Detail {
   id: ID! @id
   dGameId: String!
-  dGameMode: String
-  dGameType: String
-  dLane: String
-  dRole: String
-  dKills: Int
-  dDeaths: Int
-  dAssists: Int
-  dWins: Boolean
+  dGameDuration: Int
   dChampionName: String
   dChampionAvatar: String
+  dParticipantId: Int
+  dLane: Int
+  dWins: [String] @scalarList(strategy: RELATION)
+  dFirstRiftHerald: [Boolean] @scalarList(strategy: RELATION)
+  dFirstDragon: [Boolean] @scalarList(strategy: RELATION)
+  dFirstBaron: [Boolean] @scalarList(strategy: RELATION)
+  dFirstTower: [Boolean] @scalarList(strategy: RELATION)
+  dFirstInhibitor: [Boolean] @scalarList(strategy: RELATION)
+  dRiftHeraldKills: [Int] @scalarList(strategy: RELATION)
+  dDragonKills: [Int] @scalarList(strategy: RELATION)
+  dBaronKills: [Int] @scalarList(strategy: RELATION)
+  dTowerKills: [Int] @scalarList(strategy: RELATION)
+  dChampLevel: [Int] @scalarList(strategy: RELATION)
+  dKills: [Int] @scalarList(strategy: RELATION)
+  dDeaths: [Int] @scalarList(strategy: RELATION)
+  dAssists: [Int] @scalarList(strategy: RELATION)
+  dVisionScore: [Int] @scalarList(strategy: RELATION)
+  dWardsPlaced: [Int] @scalarList(strategy: RELATION)
+  dWardsKilled: [Int] @scalarList(strategy: RELATION)
+  dVisionWardsBought: [Int] @scalarList(strategy: RELATION)
+  dLargestKillingSpree: [Int] @scalarList(strategy: RELATION)
+  dLargestMultiKill: [Int] @scalarList(strategy: RELATION)
+  dKillingSprees: [Int] @scalarList(strategy: RELATION)
+  dDoubleKills: [Int] @scalarList(strategy: RELATION)
+  dTripleKills: [Int] @scalarList(strategy: RELATION)
+  dQuadraKills: [Int] @scalarList(strategy: RELATION)
+  dPentaKills: [Int] @scalarList(strategy: RELATION)
+  dFirstBloodKill: [Boolean] @scalarList(strategy: RELATION)
+  dFirstBloodAssist: [Boolean] @scalarList(strategy: RELATION)
+  dFirstTowerKill: [Boolean] @scalarList(strategy: RELATION)
+  dFirstTowerAssist: [Boolean] @scalarList(strategy: RELATION)
+  dNeutralMinionsKilled: [Int] @scalarList(strategy: RELATION)
+  dNeutralMinionsKilledTeamJungle: [Int] @scalarList(strategy: RELATION)
+  dNeutralMinionsKilledEnemyJungle: [Int] @scalarList(strategy: RELATION)
+  dTotalDamageDealtToChampions: [Int] @scalarList(strategy: RELATION)
+  dTotalDamageDealt: [Int] @scalarList(strategy: RELATION)
+  dTotalDamageTaken: [Int] @scalarList(strategy: RELATION)
+  dTurretKills: [Int] @scalarList(strategy: RELATION)
+  dInhibitorKills: [Int] @scalarList(strategy: RELATION)
+  dDamageDealtToTurrets: [Int] @scalarList(strategy: RELATION)
+  dDamageDealtToObjectives: [Int] @scalarList(strategy: RELATION)
+  dLongestTimeSpentLiving: [Int] @scalarList(strategy: RELATION)
+  dTotalTimeCrowdControlDealt: [Int] @scalarList(strategy: RELATION)
+  dGoldEarned: [Int] @scalarList(strategy: RELATION)
+  dTotalMinionsKilled: [Int] @scalarList(strategy: RELATION)
+  dTimeCCingOthers: [Int] @scalarList(strategy: RELATION)
+  dDamageSelfMitigated: [Int] @scalarList(strategy: RELATION)
+  dTotalHeal: [Int] @scalarList(strategy: RELATION)
   dSummoner: Summoner! @relation(name: "DetailOfSummoner" link: INLINE)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
-type LeagueCard {
-  id: ID! @id
-  lCardName: String!
-  lCardInfo: [CardInfo!]! @relation(name:"CardBroadcasterOfLeagueCard" onDelete:CASCADE)
-  lUser: User @relation(name:"LeagueCardOfUser" link: INLINE)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
-type CardInfo {
-  id: ID! @id
-  cPos: Int!
-  cLine: String!
-  cBId: String!
-  cLeagueCard: LeagueCard! @relation(name:"CardBroadcasterOfLeagueCard" link: INLINE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

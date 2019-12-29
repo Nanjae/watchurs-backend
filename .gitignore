@@ -59,5 +59,10 @@ typings/
 
 # next.js build output
 .next
+
+# json file
+*.json
+
+# deploy folder
 generated
 build

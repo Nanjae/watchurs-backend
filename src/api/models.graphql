@@ -1,23 +1,9 @@
-type User {
-  id: ID!
-  uName: String!
-  uEmail: String!
-  uPassword: String!
-  uSalt: String!
-  uLoginSecret: String
-  uBroadcaster: [Broadcaster!]!
-  uLeagueCard: [LeagueCard!]!
-  createdAt: String!
-  updatedAt: String!
-}
-
 type Broadcaster {
   id: ID!
   bId: String!
   bName: String!
   bAvatar: String!
   bPlatform: String!
-  bUser: [User!]!
   bSummoner: Summoner
   createdAt: String!
   updatedAt: String!
@@ -44,36 +30,58 @@ type Summoner {
 type Detail {
   id: ID!
   dGameId: String!
-  dGameMode: String
-  dGameType: String
-  dLane: String
-  dRole: String
-  dKills: Int
-  dDeaths: Int
-  dAssists: Int
-  dWins: Boolean
+  dGameDuration: Int
   dChampionName: String
   dChampionAvatar: String
+  dParticipantId: Int
+  dLane: Int
+  dWins: [String]
+  dFirstRiftHerald: [Boolean]
+  dFirstDragon: [Boolean]
+  dFirstBaron: [Boolean]
+  dFirstTower: [Boolean]
+  dFirstInhibitor: [Boolean]
+  dRiftHeraldKills: [Int]
+  dDragonKills: [Int]
+  dBaronKills: [Int]
+  dTowerKills: [Int]
+  dChampLevel: [Int]
+  dKills: [Int]
+  dDeaths: [Int]
+  dAssists: [Int]
+  dVisionScore: [Int]
+  dWardsPlaced: [Int]
+  dWardsKilled: [Int]
+  dVisionWardsBought: [Int]
+  dLargestKillingSpree: [Int]
+  dLargestMultiKill: [Int]
+  dKillingSprees: [Int]
+  dDoubleKills: [Int]
+  dTripleKills: [Int]
+  dQuadraKills: [Int]
+  dPentaKills: [Int]
+  dFirstBloodKill: [Boolean]
+  dFirstBloodAssist: [Boolean]
+  dFirstTowerKill: [Boolean]
+  dFirstTowerAssist: [Boolean]
+  dNeutralMinionsKilled: [Int]
+  dNeutralMinionsKilledTeamJungle: [Int]
+  dNeutralMinionsKilledEnemyJungle: [Int]
+  dTotalDamageDealtToChampions: [Int]
+  dTotalDamageDealt: [Int]
+  dTotalDamageTaken: [Int]
+  dTurretKills: [Int]
+  dInhibitorKills: [Int]
+  dDamageDealtToTurrets: [Int]
+  dDamageDealtToObjectives: [Int]
+  dLongestTimeSpentLiving: [Int]
+  dTotalTimeCrowdControlDealt: [Int]
+  dGoldEarned: [Int]
+  dTotalMinionsKilled: [Int]
+  dTimeCCingOthers: [Int]
+  dDamageSelfMitigated: [Int]
+  dTotalHeal: [Int]
   dSummoner: Summoner!
-  createdAt: String!
-  updatedAt: String!
-}
-
-type LeagueCard {
-  id: ID!
-  lCardName: String!
-  lCardInfo: [CardInfo!]!
-  lUser: User
-  createdAt: String!
-  updatedAt: String!
-}
-
-type CardInfo {
-  id: ID!
-  cPos: Int!
-  cLine: String!
-  cBId: String!
-  cLeagueCard: LeagueCard!
   createdAt: String!
   updatedAt: String!
 }

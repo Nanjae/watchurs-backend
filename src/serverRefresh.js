@@ -89,23 +89,69 @@ export const serverRefresh = async () => {
     } = await axios.get("https://ddragon.leagueoflegends.com/realms/kr.json");
 
     const sId = summoners[count].sId;
-    const {
-      data: { name: sName, profileIconId: sAvatar, accountId: sAccountId }
-    } = await axios.get(
-      `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
-    );
-    await delayAPI(count + 1 + "회 소환사 기본정보 호출 완료");
-    const sAvatarUrl = `https://ddragon.leagueoflegends.com/cdn/${vAvatar}/img/profileicon/${sAvatar}.png`;
+
+    let sName;
+    let sAvatar;
+    let sAccountId;
+
     try {
       const {
-        tier: sTier,
-        rank: sRank,
-        leaguePoints: sPoints,
-        wins: sWins,
-        losses: sLosses
-      } = await getRankedData(sId, RIOT_API);
-      await delayAPI(count + 1 + "회 소환사 랭크정보 호출 완료");
+        data: { name, profileIconId, accountId }
+      } = await axios.get(
+        `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
+      );
+      sName = name;
+      sAvatar = profileIconId;
+      sAccountId = accountId;
+      await delayAPI(count + 1 + "회 소환사 기본정보 호출 완료");
+    } catch (e) {
+      await delayAPI(count + 1 + "회 소환사 기본정보 호출 실패");
+      const {
+        data: { name, profileIconId, accountId }
+      } = await axios.get(
+        `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
+      );
+      sName = name;
+      sAvatar = profileIconId;
+      sAccountId = accountId;
+      await delayAPI(count + 1 + "회 소환사 기본정보 재호출 완료");
+    }
+
+    let sTier;
+    let sRank;
+    let sPoints;
+    let sWins;
+    let sLosses;
+
+    const sAvatarUrl = `https://ddragon.leagueoflegends.com/cdn/${vAvatar}/img/profileicon/${sAvatar}.png`;
+    try {
+      try {
+        const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
+          sId,
+          RIOT_API
+        );
+        sTier = tier;
+        sRank = rank;
+        sPoints = leaguePoints;
+        sWins = wins;
+        sLosses = losses;
+        await delayAPI(count + 1 + "회 소환사 랭크정보 호출 완료");
+      } catch (e) {
+        await delayAPI(count + 1 + "회 소환사 랭크정보 호출 실패");
+        const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
+          sId,
+          RIOT_API
+        );
+        sTier = tier;
+        sRank = rank;
+        sPoints = leaguePoints;
+        sWins = wins;
+        sLosses = losses;
+        await delayAPI(count + 1 + "회 소환사 랭크정보 재호출 완료");
+      }
+
       setSTierNum(sTier);
+
       await prisma.updateSummoner({
         where: { sId },
         data: {
@@ -148,12 +194,16 @@ export const serverRefresh = async () => {
     let addGameId = new Array();
     let delGameId = new Array();
 
-    const existSDetail = await prisma.$exists.detail({ dSummoner: { sId } });
+    let existSDetail = await prisma.$exists.detail({ dSummoner: { sId } });
     if (existSDetail) {
       await prisma.updateSummoner({
         where: { sId },
         data: { sDetail: { deleteMany: { dLane: null } } }
       });
+      existSDetail = await prisma.$exists.detail({ dSummoner: { sId } });
+    }
+
+    if (existSDetail) {
       const preDetail = await prisma.summoner({ sId }).sDetail();
       preDetail.map((detail, index) => {
         preGameId[index] = detail.dGameId;
@@ -161,14 +211,28 @@ export const serverRefresh = async () => {
     }
     // console.log("이전20" + newGameId);
 
-    const {
-      data: { matches }
-    } = await axios.get(
-      `https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/${sAccountId}?queue=0&queue=400&queue=420&queue=430&queue=440&queue=700&endIndex=20&api_key=${RIOT_API}`
-    );
-    await delayAPI(count + 1 + "회 소환사 매치정보 호출 완료");
+    let dataMatches;
 
-    matches.map((match, index) => {
+    try {
+      const {
+        data: { matches }
+      } = await axios.get(
+        `https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/${sAccountId}?queue=0&queue=400&queue=420&queue=430&queue=440&queue=700&endIndex=20&api_key=${RIOT_API}`
+      );
+      dataMatches = matches;
+      await delayAPI(count + 1 + "회 소환사 매치정보 호출 완료");
+    } catch (e) {
+      await delayAPI(count + 1 + "회 소환사 매치정보 호출 실패");
+      const {
+        data: { matches }
+      } = await axios.get(
+        `https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/${sAccountId}?queue=0&queue=400&queue=420&queue=430&queue=440&queue=700&endIndex=20&api_key=${RIOT_API}`
+      );
+      dataMatches = matches;
+      await delayAPI(count + 1 + "회 소환사 매치정보 재호출 완료");
+    }
+
+    dataMatches.map((match, index) => {
       newGameId[index] = match.gameId.toString();
     });
     // console.log("최근20" + newGameId);
@@ -207,16 +271,170 @@ export const serverRefresh = async () => {
       count + 1 + "회 소환사 디테일 " + addGameId.length + "번 호출 시작"
     );
 
+    let dataParticipantIdentities;
+    let dataTeams;
+    let dataParticipants;
+    let dataGameDuration;
+
     for (let i = 0; i < addGameId.length; i++) {
-      const {
-        data: { participantIdentities, gameMode, gameType, participants }
-      } = await axios.get(
-        `https://kr.api.riotgames.com/lol/match/v4/matches/${addGameId[i]}?api_key=${RIOT_API}`
-      );
-      await delayAPI(
-        count + 1 + "회 소환사 디테일 " + (i + 1) + "번 호출 완료"
-      );
-      const arrayIndex = participantIdentities.findIndex(
+      try {
+        const {
+          data: { participantIdentities, teams, participants, gameDuration }
+        } = await axios.get(
+          `https://kr.api.riotgames.com/lol/match/v4/matches/${addGameId[i]}?api_key=${RIOT_API}`
+        );
+        dataParticipantIdentities = participantIdentities;
+        dataTeams = teams;
+        dataParticipants = participants;
+        dataGameDuration = gameDuration;
+        await delayAPI(
+          count + 1 + "회 소환사 매치정보 " + (i + 1) + "번 호출 완료"
+        );
+      } catch (e) {
+        await delayAPI(
+          count + 1 + "회 소환사 매치정보 " + (i + 1) + "번 호출 실패"
+        );
+        const {
+          data: { participantIdentities, teams, participants, gameDuration }
+        } = await axios.get(
+          `https://kr.api.riotgames.com/lol/match/v4/matches/${addGameId[i]}?api_key=${RIOT_API}`
+        );
+        dataParticipantIdentities = participantIdentities;
+        dataTeams = teams;
+        dataParticipants = participants;
+        dataGameDuration = gameDuration;
+        await delayAPI(
+          count + 1 + "회 소환사 매치정보 " + (i + 1) + "번 재호출 완료"
+        );
+      }
+
+      const teamsWin = [dataTeams[0].win, dataTeams[1].win];
+      const teamsFirstRiftHerald = [
+        dataTeams[0].firstRiftHerald,
+        dataTeams[1].firstRiftHerald
+      ];
+      const teamsFirstDragon = [
+        dataTeams[0].firstDragon,
+        dataTeams[1].firstDragon
+      ];
+      const teamsFirstBaron = [
+        dataTeams[0].firstBaron,
+        dataTeams[1].firstBaron
+      ];
+      const teamsFirstTower = [
+        dataTeams[0].firstTower,
+        dataTeams[1].firstTower
+      ];
+      const teamsFirstInhibitor = [
+        dataTeams[0].firstInhibitor,
+        dataTeams[1].firstInhibitor
+      ];
+      const teamsRiftHeraldKills = [
+        dataTeams[0].riftHeraldKills,
+        dataTeams[1].riftHeraldKills
+      ];
+      const teamsDragonKills = [
+        dataTeams[0].dragonKills,
+        dataTeams[1].dragonKills
+      ];
+      const teamsBaronKills = [
+        dataTeams[0].baronKills,
+        dataTeams[1].baronKills
+      ];
+      const teamsTowerKills = [
+        dataTeams[0].towerKills,
+        dataTeams[1].towerKills
+      ];
+
+      let partyChampLevel = new Array(10);
+      let partyKills = new Array(10);
+      let partyDeaths = new Array(10);
+      let partyAssists = new Array(10);
+      let partyVisionScore = new Array(10);
+      let partyWardsPlaced = new Array(10);
+      let partyWardsKilled = new Array(10);
+      let partyVisionWardsBoughtInGame = new Array(10);
+      let partyLargestKillingSpree = new Array(10);
+      let partyLargestMultiKill = new Array(10);
+      let partyKillingSprees = new Array(10);
+      let partyDoubleKills = new Array(10);
+      let partyTripleKills = new Array(10);
+      let partyQuadraKills = new Array(10);
+      let partyPentaKills = new Array(10);
+      let partyFirstBloodKill = new Array(10);
+      let partyFirstBloodAssist = new Array(10);
+      let partyFirstTowerKill = new Array(10);
+      let partyFirstTowerAssist = new Array(10);
+      let partyNeutralMinionsKilled = new Array(10);
+      let partyNeutralMinionsKilledTeamJungle = new Array(10);
+      let partyNeutralMinionsKilledEnemyJungle = new Array(10);
+      let partyTotalDamageDealtToChampions = new Array(10);
+      let partyTotalDamageDealt = new Array(10);
+      let partyTotalDamageTaken = new Array(10);
+      let partyTurretKills = new Array(10);
+      let partyInhibitorKills = new Array(10);
+      let partyDamageDealtToTurrets = new Array(10);
+      let partyDamageDealtToObjectives = new Array(10);
+      let partyLongestTimeSpentLiving = new Array(10);
+      let partyTotalTimeCrowdControlDealt = new Array(10);
+      let partyGoldEarned = new Array(10);
+      let partyTotalMinionsKilled = new Array(10);
+      let partyTimeCCingOthers = new Array(10);
+      let partyDamageSelfMitigated = new Array(10);
+      let partyTotalHeal = new Array(10);
+
+      for (let i = 0; i < 10; i++) {
+        partyChampLevel[i] = dataParticipants[i].stats.champLevel;
+        partyKills[i] = dataParticipants[i].stats.kills;
+        partyDeaths[i] = dataParticipants[i].stats.deaths;
+        partyAssists[i] = dataParticipants[i].stats.assists;
+        partyVisionScore[i] = dataParticipants[i].stats.visionScore;
+        partyWardsPlaced[i] = dataParticipants[i].stats.wardsPlaced;
+        partyWardsKilled[i] = dataParticipants[i].stats.wardsKilled;
+        partyVisionWardsBoughtInGame[i] =
+          dataParticipants[i].stats.visionWardsBoughtInGame;
+        partyLargestKillingSpree[i] =
+          dataParticipants[i].stats.largestKillingSpree;
+        partyLargestMultiKill[i] = dataParticipants[i].stats.largestMultiKill;
+        partyKillingSprees[i] = dataParticipants[i].stats.killingSprees;
+        partyDoubleKills[i] = dataParticipants[i].stats.doubleKills;
+        partyTripleKills[i] = dataParticipants[i].stats.tripleKills;
+        partyQuadraKills[i] = dataParticipants[i].stats.quadraKills;
+        partyPentaKills[i] = dataParticipants[i].stats.pentaKills;
+        partyFirstBloodKill[i] = dataParticipants[i].stats.firstBloodKill;
+        partyFirstBloodAssist[i] = dataParticipants[i].stats.firstBloodAssist;
+        partyFirstTowerKill[i] = dataParticipants[i].stats.firstTowerKill;
+        partyFirstTowerAssist[i] = dataParticipants[i].stats.firstTowerAssist;
+        partyNeutralMinionsKilled[i] =
+          dataParticipants[i].stats.neutralMinionsKilled;
+        partyNeutralMinionsKilledTeamJungle[i] =
+          dataParticipants[i].stats.neutralMinionsKilledTeamJungle;
+        partyNeutralMinionsKilledEnemyJungle[i] =
+          dataParticipants[i].stats.neutralMinionsKilledEnemyJungle;
+        partyTotalDamageDealtToChampions[i] =
+          dataParticipants[i].stats.totalDamageDealtToChampions;
+        partyTotalDamageDealt[i] = dataParticipants[i].stats.totalDamageDealt;
+        partyTotalDamageTaken[i] = dataParticipants[i].stats.totalDamageTaken;
+        partyTurretKills[i] = dataParticipants[i].stats.turretKills;
+        partyInhibitorKills[i] = dataParticipants[i].stats.inhibitorKills;
+        partyDamageDealtToTurrets[i] =
+          dataParticipants[i].stats.damageDealtToTurrets;
+        partyDamageDealtToObjectives[i] =
+          dataParticipants[i].stats.damageDealtToObjectives;
+        partyLongestTimeSpentLiving[i] =
+          dataParticipants[i].stats.longestTimeSpentLiving;
+        partyTotalTimeCrowdControlDealt[i] =
+          dataParticipants[i].stats.totalTimeCrowdControlDealt;
+        partyGoldEarned[i] = dataParticipants[i].stats.goldEarned;
+        partyTotalMinionsKilled[i] =
+          dataParticipants[i].stats.totalMinionsKilled;
+        partyTimeCCingOthers[i] = dataParticipants[i].stats.timeCCingOthers;
+        partyDamageSelfMitigated[i] =
+          dataParticipants[i].stats.damageSelfMitigated;
+        partyTotalHeal[i] = dataParticipants[i].stats.totalHeal;
+      }
+
+      const arrayIndex = dataParticipantIdentities.findIndex(
         x => x.player.accountId === sAccountId
       );
 
@@ -227,7 +445,7 @@ export const serverRefresh = async () => {
       );
 
       const pickedChampion = Object.values(championJson).filter(
-        x => x.key === participants[arrayIndex].championId.toString()
+        x => x.key === dataParticipants[arrayIndex].championId.toString()
       );
 
       const championId = pickedChampion[0].id;
@@ -235,28 +453,132 @@ export const serverRefresh = async () => {
 
       const championAvatar = `http://ddragon.leagueoflegends.com/cdn/${vChampion}/img/champion/${championId}.png`;
 
-      await prisma.updateSummoner({
-        where: { sId },
-        data: {
-          sDetail: {
-            updateMany: {
-              where: { dGameId: addGameId[i] },
-              data: {
-                dGameMode: gameMode,
-                dGameType: gameType,
-                dLane: participants[arrayIndex].timeline.lane,
-                dRole: participants[arrayIndex].timeline.role,
-                dKills: participants[arrayIndex].stats.kills,
-                dDeaths: participants[arrayIndex].stats.deaths,
-                dAssists: participants[arrayIndex].stats.assists,
-                dWins: participants[arrayIndex].stats.win,
-                dChampionName: championName,
-                dChampionAvatar: championAvatar
+      let dataParticipantFrames;
+
+      try {
+        const {
+          data: {
+            frames: [{ participantFrames }]
+          }
+        } = await axios.get(
+          `https://kr.api.riotgames.com/lol/match/v4/timelines/by-match/${addGameId[i]}?api_key=${RIOT_API}`
+        );
+        dataParticipantFrames = participantFrames;
+        await delayAPI(
+          count + 1 + "회 소환사 타임라인 " + (i + 1) + "번 호출 완료"
+        );
+      } catch (e) {
+        await delayAPI(
+          count + 1 + "회 소환사 타임라인 " + (i + 1) + "번 호출 실패"
+        );
+        const {
+          data: {
+            frames: [{ participantFrames }]
+          }
+        } = await axios.get(
+          `https://kr.api.riotgames.com/lol/match/v4/timelines/by-match/${addGameId[i]}?api_key=${RIOT_API}`
+        );
+        dataParticipantFrames = participantFrames;
+        await delayAPI(
+          count + 1 + "회 소환사 타임라인 " + (i + 1) + "번 재호출 완료"
+        );
+      }
+
+      const laneFrame =
+        Object.values(dataParticipantFrames).findIndex(
+          x => x.participantId === arrayIndex + 1
+        ) + 1;
+
+      if (dataGameDuration > 300) {
+        await prisma.updateSummoner({
+          where: { sId },
+          data: {
+            sDetail: {
+              updateMany: {
+                where: { dGameId: addGameId[i] },
+                data: {
+                  dGameDuration: dataGameDuration,
+                  dChampionName: championName,
+                  dChampionAvatar: championAvatar,
+                  dParticipantId: arrayIndex + 1,
+                  dLane: laneFrame,
+                  dWins: { set: teamsWin },
+                  dFirstRiftHerald: { set: teamsFirstRiftHerald },
+                  dFirstDragon: { set: teamsFirstDragon },
+                  dFirstBaron: { set: teamsFirstBaron },
+                  dFirstTower: { set: teamsFirstTower },
+                  dFirstInhibitor: { set: teamsFirstInhibitor },
+                  dRiftHeraldKills: { set: teamsRiftHeraldKills },
+                  dDragonKills: { set: teamsDragonKills },
+                  dBaronKills: { set: teamsBaronKills },
+                  dTowerKills: { set: teamsTowerKills },
+                  dChampLevel: { set: partyChampLevel },
+                  dKills: { set: partyKills },
+                  dDeaths: { set: partyDeaths },
+                  dAssists: { set: partyAssists },
+                  dVisionScore: { set: partyVisionScore },
+                  dWardsPlaced: { set: partyWardsPlaced },
+                  dWardsKilled: { set: partyWardsKilled },
+                  dVisionWardsBought: { set: partyVisionWardsBoughtInGame },
+                  dLargestKillingSpree: { set: partyLargestKillingSpree },
+                  dLargestMultiKill: { set: partyLargestMultiKill },
+                  dKillingSprees: { set: partyKillingSprees },
+                  dDoubleKills: { set: partyDoubleKills },
+                  dTripleKills: { set: partyTripleKills },
+                  dQuadraKills: { set: partyQuadraKills },
+                  dPentaKills: { set: partyPentaKills },
+                  dFirstBloodKill: { set: partyFirstBloodKill },
+                  dFirstBloodAssist: { set: partyFirstBloodAssist },
+                  dFirstTowerKill: { set: partyFirstTowerKill },
+                  dFirstTowerAssist: { set: partyFirstTowerAssist },
+                  dNeutralMinionsKilled: { set: partyNeutralMinionsKilled },
+                  dNeutralMinionsKilledTeamJungle: {
+                    set: partyNeutralMinionsKilledTeamJungle
+                  },
+                  dNeutralMinionsKilledEnemyJungle: {
+                    set: partyNeutralMinionsKilledEnemyJungle
+                  },
+                  dTotalDamageDealtToChampions: {
+                    set: partyTotalDamageDealtToChampions
+                  },
+                  dTotalDamageDealt: { set: partyTotalDamageDealt },
+                  dTotalDamageTaken: { set: partyTotalDamageTaken },
+                  dTurretKills: { set: partyTurretKills },
+                  dInhibitorKills: { set: partyInhibitorKills },
+                  dDamageDealtToTurrets: { set: partyDamageDealtToTurrets },
+                  dDamageDealtToObjectives: {
+                    set: partyDamageDealtToObjectives
+                  },
+                  dLongestTimeSpentLiving: { set: partyLongestTimeSpentLiving },
+                  dTotalTimeCrowdControlDealt: {
+                    set: partyTotalTimeCrowdControlDealt
+                  },
+                  dGoldEarned: { set: partyGoldEarned },
+                  dTotalMinionsKilled: { set: partyTotalMinionsKilled },
+                  dTimeCCingOthers: { set: partyTimeCCingOthers },
+                  dDamageSelfMitigated: { set: partyDamageSelfMitigated },
+                  dTotalHeal: { set: partyTotalHeal }
+                }
               }
             }
           }
-        }
-      });
+        });
+      } else {
+        await prisma.updateSummoner({
+          where: { sId },
+          data: {
+            sDetail: {
+              updateMany: {
+                where: { dGameId: addGameId[i] },
+                data: {
+                  dGameDuration: dataGameDuration,
+                  dWins: { set: ["rematch", "rematch"] }
+                }
+              }
+            }
+          }
+        });
+      }
     }
     await delayAPI(count + 1 + "회 호출 종료");
     count += 1;
