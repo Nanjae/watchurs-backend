@@ -198,7 +198,7 @@ export const serverRefresh = async () => {
     if (existSDetail) {
       await prisma.updateSummoner({
         where: { sId },
-        data: { sDetail: { deleteMany: { dLane: null } } }
+        data: { sDetail: { deleteMany: { dWins: null } } }
       });
       existSDetail = await prisma.$exists.detail({ dSummoner: { sId } });
     }
