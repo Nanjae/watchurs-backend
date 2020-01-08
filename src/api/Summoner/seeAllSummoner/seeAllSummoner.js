@@ -10,7 +10,8 @@ import { prisma } from "../../../../generated/prisma-client";
 
 export default {
   Query: {
-    seeAllSummoner: async (_, __) => {
+    seeAllSummoner: async (_, args) => {
+      const { from, to } = args;
       const unsortedSummoners = await prisma.summoners();
 
       let sortBy = [
@@ -44,7 +45,7 @@ export default {
         return result;
       });
 
-      return sortedSummoners;
+      return sortedSummoners.slice(from - 1, to);
 
       // skip first 쓸 경우
       // const unsortedSummoners = await prisma.summoners({
