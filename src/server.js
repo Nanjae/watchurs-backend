@@ -13,11 +13,13 @@ const server = new GraphQLServer({
   // context: ({ request }) => ({ request, isAuthenticated })
 });
 
-setInterval(() => {
-  if (!refreshState) {
-    serverRefresh();
-  }
-}, 10000);
+if (!process.env.IS_DEV) {
+  setInterval(() => {
+    if (!refreshState) {
+      serverRefresh();
+    }
+  }, 10000);
+}
 
 server.express.use(logger("dev"));
 // server.express.use(athenticateJwt);
