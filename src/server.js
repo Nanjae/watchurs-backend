@@ -13,7 +13,7 @@ const server = new GraphQLServer({
   // context: ({ request }) => ({ request, isAuthenticated })
 });
 
-if (!process.env.IS_DEV) {
+if (process.env.IS_DEV === "false") {
   setInterval(() => {
     if (!refreshState) {
       serverRefresh();
