@@ -123,7 +123,7 @@ export const serverRefresh = async () => {
     let sWins;
     let sLosses;
 
-    const sAvatarUrl = `https://ddragon.leagueoflegends.com/cdn/${vAvatar}/img/profileicon/${sAvatar}.png`;
+    const sAvatarUrl = `http://ddragon.leagueoflegends.com/cdn/${vAvatar}/img/profileicon/${sAvatar}.png`;
     try {
       try {
         const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
