@@ -406,12 +406,12 @@ export const serverRefresh = async () => {
         partyPentaKills[i] = dataParticipants[i].stats.pentaKills;
         partyFirstBloodKill[i] = dataParticipants[i].stats.firstBloodKill;
         partyFirstBloodAssist[i] = dataParticipants[i].stats.firstBloodAssist;
-        if (dataParticipants[i].stats.firstTowerKill === null) {
+        if (dataParticipants[i].stats.firstTowerKill === undefined) {
           partyFirstTowerKill[i] = false;
         } else {
           partyFirstTowerKill[i] = dataParticipants[i].stats.firstTowerKill;
         }
-        if (dataParticipants[i].stats.firstTowerAssist === null) {
+        if (dataParticipants[i].stats.firstTowerAssist === undefined) {
           partyFirstTowerAssist[i] = false;
         } else {
           partyFirstTowerAssist[i] = dataParticipants[i].stats.firstTowerAssist;
