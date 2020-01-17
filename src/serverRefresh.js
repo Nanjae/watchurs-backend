@@ -404,8 +404,16 @@ export const serverRefresh = async () => {
         partyTripleKills[i] = dataParticipants[i].stats.tripleKills;
         partyQuadraKills[i] = dataParticipants[i].stats.quadraKills;
         partyPentaKills[i] = dataParticipants[i].stats.pentaKills;
-        partyFirstBloodKill[i] = dataParticipants[i].stats.firstBloodKill;
-        partyFirstBloodAssist[i] = dataParticipants[i].stats.firstBloodAssist;
+        if (dataParticipants[i].stats.firstBloodKill === undefined) {
+          partyFirstBloodKill[i] = false;
+        } else {
+          partyFirstBloodKill[i] = dataParticipants[i].stats.firstBloodKill;
+        }
+        if (dataParticipants[i].stats.firstBloodAssist === undefined) {
+          partyFirstBloodAssist[i] = false;
+        } else {
+          partyFirstBloodAssist[i] = dataParticipants[i].stats.firstBloodAssist;
+        }
         if (dataParticipants[i].stats.firstTowerKill === undefined) {
           partyFirstTowerKill[i] = false;
         } else {
