@@ -366,30 +366,8 @@ export const serverRefresh = async () => {
       let partyPentaKills = new Array(10);
       let partyFirstBloodKill = new Array(10);
       let partyFirstBloodAssist = new Array(10);
-      let partyFirstTowerKill = [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ];
-      let partyFirstTowerAssist = [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ];
+      let partyFirstTowerKill = new Array(10);
+      let partyFirstTowerAssist = new Array(10);
       let partyNeutralMinionsKilled = new Array(10);
       let partyNeutralMinionsKilledTeamJungle = new Array(10);
       let partyNeutralMinionsKilledEnemyJungle = new Array(10);
