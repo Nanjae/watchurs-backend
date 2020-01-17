@@ -428,8 +428,16 @@ export const serverRefresh = async () => {
         partyPentaKills[i] = dataParticipants[i].stats.pentaKills;
         partyFirstBloodKill[i] = dataParticipants[i].stats.firstBloodKill;
         partyFirstBloodAssist[i] = dataParticipants[i].stats.firstBloodAssist;
-        partyFirstTowerKill[i] = dataParticipants[i].stats.firstTowerKill;
-        partyFirstTowerAssist[i] = dataParticipants[i].stats.firstTowerAssist;
+        if (dataParticipants[i].stats.firstTowerKill === null) {
+          partyFirstTowerKill[i] = false;
+        } else {
+          partyFirstTowerKill[i] = dataParticipants[i].stats.firstTowerKill;
+        }
+        if (dataParticipants[i].stats.firstTowerAssist === null) {
+          partyFirstTowerAssist[i] = false;
+        } else {
+          partyFirstTowerAssist[i] = dataParticipants[i].stats.firstTowerAssist;
+        }
         partyNeutralMinionsKilled[i] =
           dataParticipants[i].stats.neutralMinionsKilled;
         partyNeutralMinionsKilledTeamJungle[i] =
