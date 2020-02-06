@@ -69,6 +69,17 @@ const delayAPI = item => {
   );
 };
 
+const getBroadcasterData = async (bId, TWITCH_CID) => {
+  try {
+    return await axios.get(`https://api.twitch.tv/helix/users?login=${bId}`, {
+      headers: { "Client-ID": TWITCH_CID }
+    });
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
 export let refreshState = false;
 
 export const serverRefresh = async () => {
@@ -77,6 +88,7 @@ export const serverRefresh = async () => {
   await delayAPI("전체 호출 시작");
   const summoners = await prisma.summoners();
   const RIOT_API = process.env.RIOT_API;
+  const TWITCH_CID = process.env.TWITCH_CID;
   let count = 0;
   const MAX_COUNT = summoners.length;
   while (count < MAX_COUNT) {
@@ -89,6 +101,34 @@ export const serverRefresh = async () => {
     } = await axios.get("https://ddragon.leagueoflegends.com/realms/kr.json");
 
     const sId = summoners[count].sId;
+
+    const broadcaster = await prisma.broadcasters({
+      where: { bSummoner: { sId } }
+    });
+
+    const bId = broadcaster[0].bId;
+
+    const {
+      data: {
+        data: [{ display_name: bName, profile_image_url: bAvatar }]
+      }
+    } = await getBroadcasterData(bId, TWITCH_CID);
+
+    try {
+      await prisma.updateBroadcaster({
+        where: { bId },
+        data: { bName, bAvatar }
+      });
+      await delayAPI(count + 1 + "회 브로드캐스터 기본정보 호출 완료");
+    } catch (e) {
+      console.log(e);
+      await delayAPI(count + 1 + "회 브로드캐스터 기본정보 호출 실패");
+      await prisma.updateBroadcaster({
+        where: { bId },
+        data: { bName, bAvatar }
+      });
+      await delayAPI(count + 1 + "회 브로드캐스터 기본정보 재호출 완료");
+    }
 
     let sName;
     let sAvatar;
