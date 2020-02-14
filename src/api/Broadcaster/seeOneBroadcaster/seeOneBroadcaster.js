@@ -4,12 +4,17 @@ export default {
   Query: {
     seeOneBroadcaster: async (_, args) => {
       const { term } = args;
-
-      const broadcaster = await prisma.broadcasters({
-        where: { OR: [{ bName_contains: term }, { bId_contains: term }] }
+      const existBroadcaster = await prisma.$exists.broadcaster({
+        OR: [{ bName: term }, { bId: term }]
       });
 
-      return broadcaster;
+      if (existBroadcaster) {
+        return await prisma.broadcasters({
+          where: { OR: [{ bName: term }, { bId: term }] }
+        });
+      } else {
+        return null;
+      }
     }
   }
 };
