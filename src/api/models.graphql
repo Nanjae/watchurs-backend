@@ -4,7 +4,7 @@ type Broadcaster {
   bName: String!
   bAvatar: String!
   bPlatform: String!
-  bSummoner: Summoner
+  bSummoner: [Summoner]
   createdAt: String!
   updatedAt: String!
 }

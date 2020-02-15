@@ -4,7 +4,7 @@ type Broadcaster {
   bName: String!
   bAvatar: String!
   bPlatform: String!
-  bSummoner: Summoner @relation(name: "SummonerOfBroadcaster" onDelete: CASCADE)
+  bSummoner: [Summoner] @relation(name: "SummonerOfBroadcaster" onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
