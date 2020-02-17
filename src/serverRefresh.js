@@ -90,6 +90,7 @@ export const serverRefresh = async () => {
   const RIOT_API = process.env.RIOT_API;
   const TWITCH_CID = process.env.TWITCH_CID;
   let count = 0;
+  let recheck = false;
   const MAX_COUNT = summoners.length;
   while (count < MAX_COUNT) {
     await delayAPI(count + 1 + "회 호출 시작");
@@ -122,6 +123,7 @@ export const serverRefresh = async () => {
       await delayAPI(count + 1 + "회 브로드캐스터 기본정보 호출 완료");
     } catch (e) {
       console.log(e);
+      recheck = true;
       await delayAPI(count + 1 + "회 브로드캐스터 기본정보 호출 실패");
       await prisma.updateBroadcaster({
         where: { bId },
@@ -145,6 +147,7 @@ export const serverRefresh = async () => {
       sAccountId = accountId;
       await delayAPI(count + 1 + "회 소환사 기본정보 호출 완료");
     } catch (e) {
+      recheck = true;
       await delayAPI(count + 1 + "회 소환사 기본정보 호출 실패");
       const {
         data: { name, profileIconId, accountId }
@@ -177,6 +180,7 @@ export const serverRefresh = async () => {
         sLosses = losses;
         await delayAPI(count + 1 + "회 소환사 랭크정보 호출 완료");
       } catch (e) {
+        recheck = true;
         await delayAPI(count + 1 + "회 소환사 랭크정보 호출 실패");
         const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
           sId,
@@ -261,6 +265,7 @@ export const serverRefresh = async () => {
       dataMatches = matches;
       await delayAPI(count + 1 + "회 소환사 매치정보 호출 완료");
     } catch (e) {
+      recheck = true;
       await delayAPI(count + 1 + "회 소환사 매치정보 호출 실패");
       const {
         data: { matches }
@@ -334,6 +339,7 @@ export const serverRefresh = async () => {
           count + 1 + "회 소환사 매치정보 " + (i + 1) + "번 호출 완료"
         );
       } catch (e) {
+        recheck = true;
         await delayAPI(
           count + 1 + "회 소환사 매치정보 " + (i + 1) + "번 호출 실패"
         );
@@ -527,6 +533,7 @@ export const serverRefresh = async () => {
           count + 1 + "회 소환사 타임라인 " + (i + 1) + "번 호출 완료"
         );
       } catch (e) {
+        recheck = true;
         await delayAPI(
           count + 1 + "회 소환사 타임라인 " + (i + 1) + "번 호출 실패"
         );
@@ -644,7 +651,10 @@ export const serverRefresh = async () => {
       }
     }
     await delayAPI(count + 1 + "회 호출 종료");
-    count += 1;
+    if (!recheck) {
+      count += 1;
+      recheck = false;
+    }
     if (count === MAX_COUNT) {
       await delayAPI("전체 호출 종료");
       refreshState = false;
