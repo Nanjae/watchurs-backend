@@ -15,6 +15,7 @@ type Summoner {
   sAccountId: String! @unique
   sName: String!
   sAvatar: String!
+  sLevel: Int! @default(value:100)
   sTier: String! @default(value:"UNRANKED")
   sTierNum: Int! @default(value:99)
   sRank: String! @default(value:"UNRANKED")

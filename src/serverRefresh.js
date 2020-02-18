@@ -135,16 +135,18 @@ export const serverRefresh = async () => {
     let sName;
     let sAvatar;
     let sAccountId;
+    let sLevel;
 
     try {
       const {
-        data: { name, profileIconId, accountId }
+        data: { name, profileIconId, accountId, summonerLevel }
       } = await axios.get(
         `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
       );
       sName = name;
       sAvatar = profileIconId;
       sAccountId = accountId;
+      sLevel = summonerLevel;
       await delayAPI(count + 1 + "회 소환사 기본정보 호출 완료");
     } catch (e) {
       recheck = true;
@@ -157,6 +159,7 @@ export const serverRefresh = async () => {
       sName = name;
       sAvatar = profileIconId;
       sAccountId = accountId;
+      sLevel = summonerLevel;
       await delayAPI(count + 1 + "회 소환사 기본정보 재호출 완료");
     }
 
@@ -201,6 +204,7 @@ export const serverRefresh = async () => {
           sAccountId,
           sName,
           sAvatar: sAvatarUrl,
+          sLevel,
           sTier,
           sTierNum,
           sRank,
@@ -217,6 +221,7 @@ export const serverRefresh = async () => {
             sAccountId,
             sName,
             sAvatar: sAvatarUrl,
+            sLevel,
             sTier: "UNRANKED",
             sTierNum: 99,
             sRank: "UNRANKED",

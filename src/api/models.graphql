@@ -15,6 +15,7 @@ type Summoner {
   sAccountId: String!
   sName: String!
   sAvatar: String!
+  sLevel: Int!
   sTier: String!
   sTierNum: Int!
   sRank: String!
