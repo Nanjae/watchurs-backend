@@ -180,7 +180,6 @@ export const serverRefresh = async () => {
         sLosses = losses;
         await delayAPI(count + 1 + "회 소환사 랭크정보 호출 완료");
       } catch (e) {
-        recheck = true;
         await delayAPI(count + 1 + "회 소환사 랭크정보 호출 실패");
         const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
           sId,
