@@ -103,11 +103,13 @@ export const serverRefresh = async () => {
 
     const sId = summoners[count].sId;
 
-    const broadcaster = await prisma.broadcasters({
-      where: { bSummoner_every: { sId } }
-    });
+    const broadcaster = await prisma
+      .summoners({
+        where: { sId }
+      })
+      .sBroadcaster();
 
-    const bId = broadcaster[0].bId;
+    const bId = broadcaster[0].sBroadcaster.bId;
 
     const {
       data: {

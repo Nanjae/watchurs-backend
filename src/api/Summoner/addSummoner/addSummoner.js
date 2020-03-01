@@ -83,12 +83,19 @@ export default {
       const RIOT_API = process.env.RIOT_API;
       const bInfo = await prisma.broadcaster({ bId });
       const encodedSNameS = encodeURIComponent(sNameS);
+
+      const {
+        data: {
+          n: { profileicon: vAvatar }
+        }
+      } = await axios.get("https://ddragon.leagueoflegends.com/realms/kr.json");
+
       const {
         data: { id: sId, profileIconId: sAvatar, accountId: sAccountId }
       } = await axios.get(
         `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodedSNameS}?api_key=${RIOT_API}`
       );
-      const sAvatarUrl = `http://ddragon.leagueoflegends.com/cdn/9.23.1/img/profileicon/${sAvatar}.png`;
+      const sAvatarUrl = `http://ddragon.leagueoflegends.com/cdn/${vAvatar}/img/profileicon/${sAvatar}.png`;
       const existSummoner = await prisma.$exists.summoner({ sId });
       if (existSummoner) {
         console.log("이미 등록된 소환사입니다.");
