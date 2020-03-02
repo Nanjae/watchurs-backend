@@ -32,13 +32,29 @@ export default {
   Mutation: {
     setBroadcaster: async (_, args) => {
       const TWITCH_CID = process.env.TWITCH_CID;
-      const { bId, bPlatform } = args;
+      const { bId, bPlatform, name } = args;
       const existBroadcaster = await prisma.$exists.broadcaster({ bId });
-      const {
-        data: {
-          data: [{ display_name: bName, profile_image_url: bAvatar }]
-        }
-      } = await getBroadcasterData(bId, TWITCH_CID);
+
+      let bName = "";
+      let bAvatar = "";
+
+      if (bPlatform === "TWITCH") {
+        const {
+          data: {
+            data: [{ display_name, profile_image_url }]
+          }
+        } = await getBroadcasterData(bId, TWITCH_CID);
+        bName = display_name;
+        bAvatar = profile_image_url;
+      } else if (bPlatform === "AFREECATV") {
+        bName = name;
+        bAvatar = `http://profile.img.afreecatv.com/LOGO/${bId.substring(
+          0,
+          2
+        )}/${bId}/${bId}.jpg`;
+      } else {
+        return false;
+      }
       // 조건 1: 등록된 브로드캐스터
       if (existBroadcaster) {
         const { id } = await prisma.broadcaster({ bId });

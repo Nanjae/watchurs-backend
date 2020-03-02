@@ -11,8 +11,9 @@ import { prisma } from "../../../../generated/prisma-client";
 export default {
   Query: {
     seePlatform: async (_, args) => {
-      const { bName } = args;
-      return await prisma.broadcaster({ bName });
+      const { bPlatform } = args;
+      const broadcasters = await prisma.broadcasters({ where: { bPlatform } });
+      return broadcasters;
     }
   }
 };

@@ -11,8 +11,14 @@ import { prisma } from "../../../../generated/prisma-client";
 export default {
   Query: {
     seeAllSummoner: async (_, args) => {
-      const { from, to } = args;
-      const unsortedSummoners = await prisma.summoners();
+      const { platform, from, to } = args;
+
+      const unsortedSummoners =
+        platform !== undefined
+          ? await prisma.summoners({
+              where: { sBroadcaster: { bPlatform: platform } }
+            })
+          : await prisma.summoners();
 
       let sortBy = [
         {

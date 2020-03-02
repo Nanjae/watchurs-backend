@@ -1,0 +1,3 @@
+type Query {
+  seePlatform(bPlatform: String!): [Broadcaster!]
+}

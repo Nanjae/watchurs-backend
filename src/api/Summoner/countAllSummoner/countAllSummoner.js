@@ -10,8 +10,14 @@ import { prisma } from "../../../../generated/prisma-client";
 
 export default {
   Query: {
-    countAllSummoner: async (_, __) => {
-      const summoners = await prisma.summoners();
+    countAllSummoner: async (_, args) => {
+      const { platform } = args;
+      const summoners =
+        platform === undefined
+          ? await prisma.summoners()
+          : await prisma.summoners({
+              where: { sBroadcaster: { bPlatform: platform } }
+            });
       const count = summoners.length;
       return count;
     }
