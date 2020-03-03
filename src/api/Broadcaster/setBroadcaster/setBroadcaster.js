@@ -55,6 +55,7 @@ export default {
       } else {
         return false;
       }
+
       // 조건 1: 등록된 브로드캐스터
       if (existBroadcaster) {
         const { id } = await prisma.broadcaster({ bId });

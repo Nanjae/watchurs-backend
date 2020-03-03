@@ -30,7 +30,7 @@ const getRankedData = async (sId, RIOT_API) => {
 let sTierNum = 99;
 
 const setSTierNum = async sTier => {
-  if (sTier === "CHALLANGER") {
+  if (sTier === "CHALLENGER") {
     sTierNum = 1;
   }
   if (sTier === "GRANDMASTER") {
@@ -110,12 +110,34 @@ export const serverRefresh = async () => {
       .sBroadcaster();
 
     const bId = broadcaster[0].sBroadcaster.bId;
+    const bPlatform = broadcaster[0].sBroadcaster.bPlatform;
 
-    const {
-      data: {
-        data: [{ display_name: bName, profile_image_url: bAvatar }]
+    let bName = "";
+    let bAvatar = "";
+
+    try {
+      if (bPlatform === "TWITCH") {
+        const {
+          data: {
+            data: [{ display_name, profile_image_url }]
+          }
+        } = await getBroadcasterData(bId, TWITCH_CID);
+        bName = display_name;
+        bAvatar = profile_image_url;
       }
-    } = await getBroadcasterData(bId, TWITCH_CID);
+
+      if (bPlatform === "AFREECATV") {
+        bName = broadcaster[0].sBroadcaster.bName;
+        bAvatar = `http://profile.img.afreecatv.com/LOGO/${bId.substring(
+          0,
+          2
+        )}/${bId}/${bId}.jpg`;
+      }
+    } catch (e) {
+      console.log(e);
+      recheck = true;
+      await delayAPI(count + 1 + "회 브로드캐스터 이름, 아바타 호출 실패");
+    }
 
     try {
       await prisma.updateBroadcaster({

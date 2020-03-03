@@ -45,7 +45,7 @@ const getUnrankedData = async (sId, RIOT_API) => {
 };
 
 const setSTierNum = async sTier => {
-  if (sTier === "CHALLANGER") {
+  if (sTier === "CHALLENGER") {
     sTierNum = 1;
   }
   if (sTier === "GRANDMASTER") {
