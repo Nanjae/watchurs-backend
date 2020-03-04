@@ -681,6 +681,7 @@ export const serverRefresh = async () => {
     await delayAPI(count + 1 + "회 호출 종료");
     if (!recheck) {
       count += 1;
+    } else if (recheck) {
       recheck = false;
     }
     if (count === MAX_COUNT) {
