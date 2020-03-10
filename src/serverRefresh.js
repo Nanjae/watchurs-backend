@@ -386,145 +386,17 @@ export const serverRefresh = async () => {
       }
 
       const teamsWin = [dataTeams[0].win, dataTeams[1].win];
-      const teamsFirstRiftHerald = [
-        dataTeams[0].firstRiftHerald,
-        dataTeams[1].firstRiftHerald
-      ];
-      const teamsFirstDragon = [
-        dataTeams[0].firstDragon,
-        dataTeams[1].firstDragon
-      ];
-      const teamsFirstBaron = [
-        dataTeams[0].firstBaron,
-        dataTeams[1].firstBaron
-      ];
-      const teamsFirstTower = [
-        dataTeams[0].firstTower,
-        dataTeams[1].firstTower
-      ];
-      const teamsFirstInhibitor = [
-        dataTeams[0].firstInhibitor,
-        dataTeams[1].firstInhibitor
-      ];
-      const teamsRiftHeraldKills = [
-        dataTeams[0].riftHeraldKills,
-        dataTeams[1].riftHeraldKills
-      ];
-      const teamsDragonKills = [
-        dataTeams[0].dragonKills,
-        dataTeams[1].dragonKills
-      ];
-      const teamsBaronKills = [
-        dataTeams[0].baronKills,
-        dataTeams[1].baronKills
-      ];
-      const teamsTowerKills = [
-        dataTeams[0].towerKills,
-        dataTeams[1].towerKills
-      ];
 
       let partyChampLevel = new Array(10);
       let partyKills = new Array(10);
       let partyDeaths = new Array(10);
       let partyAssists = new Array(10);
-      let partyVisionScore = new Array(10);
-      let partyWardsPlaced = new Array(10);
-      let partyWardsKilled = new Array(10);
-      let partyVisionWardsBoughtInGame = new Array(10);
-      let partyLargestKillingSpree = new Array(10);
-      let partyLargestMultiKill = new Array(10);
-      let partyKillingSprees = new Array(10);
-      let partyDoubleKills = new Array(10);
-      let partyTripleKills = new Array(10);
-      let partyQuadraKills = new Array(10);
-      let partyPentaKills = new Array(10);
-      let partyFirstBloodKill = new Array(10);
-      let partyFirstBloodAssist = new Array(10);
-      let partyFirstTowerKill = new Array(10);
-      let partyFirstTowerAssist = new Array(10);
-      let partyNeutralMinionsKilled = new Array(10);
-      let partyNeutralMinionsKilledTeamJungle = new Array(10);
-      let partyNeutralMinionsKilledEnemyJungle = new Array(10);
-      let partyTotalDamageDealtToChampions = new Array(10);
-      let partyTotalDamageDealt = new Array(10);
-      let partyTotalDamageTaken = new Array(10);
-      let partyTurretKills = new Array(10);
-      let partyInhibitorKills = new Array(10);
-      let partyDamageDealtToTurrets = new Array(10);
-      let partyDamageDealtToObjectives = new Array(10);
-      let partyLongestTimeSpentLiving = new Array(10);
-      let partyTotalTimeCrowdControlDealt = new Array(10);
-      let partyGoldEarned = new Array(10);
-      let partyTotalMinionsKilled = new Array(10);
-      let partyTimeCCingOthers = new Array(10);
-      let partyDamageSelfMitigated = new Array(10);
-      let partyTotalHeal = new Array(10);
 
       for (let i = 0; i < 10; i++) {
         partyChampLevel[i] = dataParticipants[i].stats.champLevel;
         partyKills[i] = dataParticipants[i].stats.kills;
         partyDeaths[i] = dataParticipants[i].stats.deaths;
         partyAssists[i] = dataParticipants[i].stats.assists;
-        partyVisionScore[i] = dataParticipants[i].stats.visionScore;
-        partyWardsPlaced[i] = dataParticipants[i].stats.wardsPlaced;
-        partyWardsKilled[i] = dataParticipants[i].stats.wardsKilled;
-        partyVisionWardsBoughtInGame[i] =
-          dataParticipants[i].stats.visionWardsBoughtInGame;
-        partyLargestKillingSpree[i] =
-          dataParticipants[i].stats.largestKillingSpree;
-        partyLargestMultiKill[i] = dataParticipants[i].stats.largestMultiKill;
-        partyKillingSprees[i] = dataParticipants[i].stats.killingSprees;
-        partyDoubleKills[i] = dataParticipants[i].stats.doubleKills;
-        partyTripleKills[i] = dataParticipants[i].stats.tripleKills;
-        partyQuadraKills[i] = dataParticipants[i].stats.quadraKills;
-        partyPentaKills[i] = dataParticipants[i].stats.pentaKills;
-        if (dataParticipants[i].stats.firstBloodKill === undefined) {
-          partyFirstBloodKill[i] = false;
-        } else {
-          partyFirstBloodKill[i] = dataParticipants[i].stats.firstBloodKill;
-        }
-        if (dataParticipants[i].stats.firstBloodAssist === undefined) {
-          partyFirstBloodAssist[i] = false;
-        } else {
-          partyFirstBloodAssist[i] = dataParticipants[i].stats.firstBloodAssist;
-        }
-        if (dataParticipants[i].stats.firstTowerKill === undefined) {
-          partyFirstTowerKill[i] = false;
-        } else {
-          partyFirstTowerKill[i] = dataParticipants[i].stats.firstTowerKill;
-        }
-        if (dataParticipants[i].stats.firstTowerAssist === undefined) {
-          partyFirstTowerAssist[i] = false;
-        } else {
-          partyFirstTowerAssist[i] = dataParticipants[i].stats.firstTowerAssist;
-        }
-        partyNeutralMinionsKilled[i] =
-          dataParticipants[i].stats.neutralMinionsKilled;
-        partyNeutralMinionsKilledTeamJungle[i] =
-          dataParticipants[i].stats.neutralMinionsKilledTeamJungle;
-        partyNeutralMinionsKilledEnemyJungle[i] =
-          dataParticipants[i].stats.neutralMinionsKilledEnemyJungle;
-        partyTotalDamageDealtToChampions[i] =
-          dataParticipants[i].stats.totalDamageDealtToChampions;
-        partyTotalDamageDealt[i] = dataParticipants[i].stats.totalDamageDealt;
-        partyTotalDamageTaken[i] = dataParticipants[i].stats.totalDamageTaken;
-        partyTurretKills[i] = dataParticipants[i].stats.turretKills;
-        partyInhibitorKills[i] = dataParticipants[i].stats.inhibitorKills;
-        partyDamageDealtToTurrets[i] =
-          dataParticipants[i].stats.damageDealtToTurrets;
-        partyDamageDealtToObjectives[i] =
-          dataParticipants[i].stats.damageDealtToObjectives;
-        partyLongestTimeSpentLiving[i] =
-          dataParticipants[i].stats.longestTimeSpentLiving;
-        partyTotalTimeCrowdControlDealt[i] =
-          dataParticipants[i].stats.totalTimeCrowdControlDealt;
-        partyGoldEarned[i] = dataParticipants[i].stats.goldEarned;
-        partyTotalMinionsKilled[i] =
-          dataParticipants[i].stats.totalMinionsKilled;
-        partyTimeCCingOthers[i] = dataParticipants[i].stats.timeCCingOthers;
-        partyDamageSelfMitigated[i] =
-          dataParticipants[i].stats.damageSelfMitigated;
-        partyTotalHeal[i] = dataParticipants[i].stats.totalHeal;
       }
 
       const arrayIndex = dataParticipantIdentities.findIndex(
@@ -597,61 +469,10 @@ export const serverRefresh = async () => {
                   dParticipantId: arrayIndex + 1,
                   dLane: laneFrame,
                   dWins: { set: teamsWin },
-                  dFirstRiftHerald: { set: teamsFirstRiftHerald },
-                  dFirstDragon: { set: teamsFirstDragon },
-                  dFirstBaron: { set: teamsFirstBaron },
-                  dFirstTower: { set: teamsFirstTower },
-                  dFirstInhibitor: { set: teamsFirstInhibitor },
-                  dRiftHeraldKills: { set: teamsRiftHeraldKills },
-                  dDragonKills: { set: teamsDragonKills },
-                  dBaronKills: { set: teamsBaronKills },
-                  dTowerKills: { set: teamsTowerKills },
                   dChampLevel: { set: partyChampLevel },
                   dKills: { set: partyKills },
                   dDeaths: { set: partyDeaths },
-                  dAssists: { set: partyAssists },
-                  dVisionScore: { set: partyVisionScore },
-                  dWardsPlaced: { set: partyWardsPlaced },
-                  dWardsKilled: { set: partyWardsKilled },
-                  dVisionWardsBought: { set: partyVisionWardsBoughtInGame },
-                  dLargestKillingSpree: { set: partyLargestKillingSpree },
-                  dLargestMultiKill: { set: partyLargestMultiKill },
-                  dKillingSprees: { set: partyKillingSprees },
-                  dDoubleKills: { set: partyDoubleKills },
-                  dTripleKills: { set: partyTripleKills },
-                  dQuadraKills: { set: partyQuadraKills },
-                  dPentaKills: { set: partyPentaKills },
-                  dFirstBloodKill: { set: partyFirstBloodKill },
-                  dFirstBloodAssist: { set: partyFirstBloodAssist },
-                  dFirstTowerKill: { set: partyFirstTowerKill },
-                  dFirstTowerAssist: { set: partyFirstTowerAssist },
-                  dNeutralMinionsKilled: { set: partyNeutralMinionsKilled },
-                  dNeutralMinionsKilledTeamJungle: {
-                    set: partyNeutralMinionsKilledTeamJungle
-                  },
-                  dNeutralMinionsKilledEnemyJungle: {
-                    set: partyNeutralMinionsKilledEnemyJungle
-                  },
-                  dTotalDamageDealtToChampions: {
-                    set: partyTotalDamageDealtToChampions
-                  },
-                  dTotalDamageDealt: { set: partyTotalDamageDealt },
-                  dTotalDamageTaken: { set: partyTotalDamageTaken },
-                  dTurretKills: { set: partyTurretKills },
-                  dInhibitorKills: { set: partyInhibitorKills },
-                  dDamageDealtToTurrets: { set: partyDamageDealtToTurrets },
-                  dDamageDealtToObjectives: {
-                    set: partyDamageDealtToObjectives
-                  },
-                  dLongestTimeSpentLiving: { set: partyLongestTimeSpentLiving },
-                  dTotalTimeCrowdControlDealt: {
-                    set: partyTotalTimeCrowdControlDealt
-                  },
-                  dGoldEarned: { set: partyGoldEarned },
-                  dTotalMinionsKilled: { set: partyTotalMinionsKilled },
-                  dTimeCCingOthers: { set: partyTimeCCingOthers },
-                  dDamageSelfMitigated: { set: partyDamageSelfMitigated },
-                  dTotalHeal: { set: partyTotalHeal }
+                  dAssists: { set: partyAssists }
                 }
               }
             }
