@@ -220,7 +220,16 @@ export const serverRefresh = async () => {
         await delayAPI(count + 1 + "회 소환사 랭크정보 재호출 완료");
       }
 
-      setSTierNum(sTier);
+      sTierNum = 99;
+      // console.log("셋 : " + sTierNum);
+
+      await setSTierNum(sTier);
+      // console.log("체크 : " + sTierNum);
+
+      if (sTierNum === 99) {
+        await setSTierNum(sTier);
+        // console.log("리체크 : " + sTierNum);
+      }
 
       await prisma.updateSummoner({
         where: { sId },
