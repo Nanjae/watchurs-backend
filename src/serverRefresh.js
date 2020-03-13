@@ -30,6 +30,7 @@ const getRankedData = async (sId, RIOT_API) => {
 let sTierNum = 99;
 
 const setSTierNum = async (sTier, sTierNum) => {
+  // console.log("전 : " + sTier + " " + sTierNum);
   if (sTier === "CHALLENGER") {
     if (sTierNum !== 1) {
       sTierNum = 1;
@@ -67,6 +68,7 @@ const setSTierNum = async (sTier, sTierNum) => {
       sTierNum = 9;
     }
   }
+  // console.log("후 : " + sTier + " " + sTierNum);
   return sTierNum;
 };
 
@@ -234,12 +236,12 @@ export const serverRefresh = async () => {
       sTierNum = 99;
       // console.log("셋 : " + sTierNum);
 
-      await setSTierNum(sTier, sTierNum);
-      // console.log("체크 : " + sTierNum);
+      sTierNum = await setSTierNum(sTier, sTierNum);
+      // console.log("체크 : " + sTier + " " + sTierNum);
 
       if (sTierNum === 99) {
-        await setSTierNum(sTier, sTierNum);
-        // console.log("리체크 : " + sTierNum);
+        sTierNum = await setSTierNum(sTier, sTierNum);
+        // console.log("리체크 : " + sTier + " " + +sTierNum);
       }
 
       await prisma.updateSummoner({
