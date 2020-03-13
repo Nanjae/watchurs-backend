@@ -29,33 +29,51 @@ const getRankedData = async (sId, RIOT_API) => {
 
 let sTierNum = 99;
 
-const setSTierNum = async sTier => {
+const setSTierNum = async (sTier, sTierNum) => {
   if (sTier === "CHALLENGER") {
-    sTierNum = 1;
+    if (sTierNum !== 1) {
+      sTierNum = 1;
+    }
   }
   if (sTier === "GRANDMASTER") {
-    sTierNum = 2;
+    if (sTierNum !== 2) {
+      sTierNum = 2;
+    }
   }
   if (sTier === "MASTER") {
-    sTierNum = 3;
+    if (sTierNum !== 3) {
+      sTierNum = 3;
+    }
   }
   if (sTier === "DIAMOND") {
-    sTierNum = 4;
+    if (sTierNum !== 4) {
+      sTierNum = 4;
+    }
   }
   if (sTier === "PLATINUM") {
-    sTierNum = 5;
+    if (sTierNum !== 5) {
+      sTierNum = 5;
+    }
   }
   if (sTier === "GOLD") {
-    sTierNum = 6;
+    if (sTierNum !== 6) {
+      sTierNum = 6;
+    }
   }
   if (sTier === "SILVER") {
-    sTierNum = 7;
+    if (sTierNum !== 7) {
+      sTierNum = 7;
+    }
   }
   if (sTier === "BRONZE") {
-    sTierNum = 8;
+    if (sTierNum !== 8) {
+      sTierNum = 8;
+    }
   }
   if (sTier === "IRON") {
-    sTierNum = 9;
+    if (sTierNum !== 9) {
+      sTierNum = 9;
+    }
   }
 };
 
@@ -223,11 +241,11 @@ export const serverRefresh = async () => {
       sTierNum = 99;
       // console.log("셋 : " + sTierNum);
 
-      await setSTierNum(sTier);
+      await setSTierNum(sTier, sTierNum);
       // console.log("체크 : " + sTierNum);
 
       if (sTierNum === 99) {
-        await setSTierNum(sTier);
+        await setSTierNum(sTier, sTierNum);
         // console.log("리체크 : " + sTierNum);
       }
 
