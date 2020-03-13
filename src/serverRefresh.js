@@ -34,47 +34,40 @@ const setSTierNum = async (sTier, sTierNum) => {
     if (sTierNum !== 1) {
       sTierNum = 1;
     }
-  }
-  if (sTier === "GRANDMASTER") {
+  } else if (sTier === "GRANDMASTER") {
     if (sTierNum !== 2) {
       sTierNum = 2;
     }
-  }
-  if (sTier === "MASTER") {
+  } else if (sTier === "MASTER") {
     if (sTierNum !== 3) {
       sTierNum = 3;
     }
-  }
-  if (sTier === "DIAMOND") {
+  } else if (sTier === "DIAMOND") {
     if (sTierNum !== 4) {
       sTierNum = 4;
     }
-  }
-  if (sTier === "PLATINUM") {
+  } else if (sTier === "PLATINUM") {
     if (sTierNum !== 5) {
       sTierNum = 5;
     }
-  }
-  if (sTier === "GOLD") {
+  } else if (sTier === "GOLD") {
     if (sTierNum !== 6) {
       sTierNum = 6;
     }
-  }
-  if (sTier === "SILVER") {
+  } else if (sTier === "SILVER") {
     if (sTierNum !== 7) {
       sTierNum = 7;
     }
-  }
-  if (sTier === "BRONZE") {
+  } else if (sTier === "BRONZE") {
     if (sTierNum !== 8) {
       sTierNum = 8;
     }
-  }
-  if (sTier === "IRON") {
+  } else if (sTier === "IRON") {
     if (sTierNum !== 9) {
       sTierNum = 9;
     }
   }
+  return sTierNum;
 };
 
 const delayAPI = item => {
