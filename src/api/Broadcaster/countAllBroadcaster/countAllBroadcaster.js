@@ -10,8 +10,14 @@ import { prisma } from "../../../../generated/prisma-client";
 
 export default {
   Query: {
-    countAllBroadcaster: async (_, __) => {
-      const broadcasters = await prisma.broadcasters();
+    countAllBroadcaster: async (_, args) => {
+      const { platform } = args;
+      const broadcasters =
+        platform === undefined
+          ? await prisma.broadcasters()
+          : await prisma.broadcasters({
+              where: { bPlatform: platform }
+            });
       const count = broadcasters.length;
       return count;
     }

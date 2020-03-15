@@ -244,6 +244,11 @@ export const serverRefresh = async () => {
         // console.log("리체크 : " + sTier + " " + +sTierNum);
       }
 
+      if (sTierNum === 99) {
+        sTierNum = await setSTierNum(sTier, sTierNum);
+        // console.log("리체크 : " + sTier + " " + +sTierNum);
+      }
+
       await prisma.updateSummoner({
         where: { sId },
         data: {
