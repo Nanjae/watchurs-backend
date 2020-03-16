@@ -45,3 +45,10 @@ type Detail {
   createdAt: String!
   updatedAt: String!
 }
+
+type Request {
+  id: ID!
+  rPlatform: String!
+  rName: String!
+  rId: String!
+}

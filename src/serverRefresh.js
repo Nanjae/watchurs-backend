@@ -7,23 +7,34 @@ const getRankedData = async (sId, RIOT_API) => {
     const { data } = await axios.get(
       `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${sId}?api_key=${RIOT_API}`
     );
-    if (data[0] === undefined) return;
-    if (data[0].queueType === "RANKED_SOLO_5x5") {
-      return data[0];
+    // console.log(data);
+    // console.log(data.length);
+    if (data.length !== 0) {
+      if (data[0].queueType === "RANKED_SOLO_5x5") {
+        return data[0];
+      }
+      if (data[1].queueType === "RANKED_SOLO_5x5") {
+        return data[1];
+      }
+      if (data[2].queueType === "RANKED_SOLO_5x5") {
+        return data[2];
+      }
+      if (data[3].queueType === "RANKED_SOLO_5x5") {
+        return data[3];
+      }
+    } else {
+      return {
+        tier: "UNRANKED",
+        rank: "UNRANKED",
+        leaguePoints: 0,
+        wins: 0,
+        losses: 0
+      };
     }
-    if (data[1].queueType === "RANKED_SOLO_5x5") {
-      return data[1];
-    }
-    if (data[2].queueType === "RANKED_SOLO_5x5") {
-      return data[2];
-    }
-    if (data[3].queueType === "RANKED_SOLO_5x5") {
-      return data[3];
-    }
-    return;
   } catch (e) {
+    console.log("__1__");
     console.log(e);
-    return false;
+    return;
   }
 };
 
@@ -88,6 +99,7 @@ const getBroadcasterData = async (bId, TWITCH_CID) => {
       headers: { "Client-ID": TWITCH_CID }
     });
   } catch (e) {
+    console.log("__2__");
     console.log(e);
     return false;
   }
@@ -147,8 +159,9 @@ export const serverRefresh = async () => {
         )}/${bId}/${bId}.jpg`;
       }
     } catch (e) {
-      console.log(e);
       recheck = true;
+      console.log("__3__");
+      console.log(e);
       await delayAPI(count + 1 + "회 브로드캐스터 이름, 아바타 호출 실패");
     }
 
@@ -159,8 +172,9 @@ export const serverRefresh = async () => {
       });
       await delayAPI(count + 1 + "회 브로드캐스터 기본정보 호출 완료");
     } catch (e) {
-      console.log(e);
       recheck = true;
+      console.log("__4__");
+      console.log(e);
       await delayAPI(count + 1 + "회 브로드캐스터 기본정보 호출 실패");
       await prisma.updateBroadcaster({
         where: { bId },
@@ -187,9 +201,11 @@ export const serverRefresh = async () => {
       await delayAPI(count + 1 + "회 소환사 기본정보 호출 완료");
     } catch (e) {
       recheck = true;
+      console.log("__5__");
+      console.log(e);
       await delayAPI(count + 1 + "회 소환사 기본정보 호출 실패");
       const {
-        data: { name, profileIconId, accountId }
+        data: { name, profileIconId, accountId, summonerLevel }
       } = await axios.get(
         `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${sId}?api_key=${RIOT_API}`
       );
@@ -208,47 +224,61 @@ export const serverRefresh = async () => {
 
     const sAvatarUrl = `http://ddragon.leagueoflegends.com/cdn/${vAvatar}/img/profileicon/${sAvatar}.png`;
     try {
-      try {
-        const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
-          sId,
-          RIOT_API
-        );
-        sTier = tier;
-        sRank = rank;
-        sPoints = leaguePoints;
-        sWins = wins;
-        sLosses = losses;
-        await delayAPI(count + 1 + "회 소환사 랭크정보 호출 완료");
-      } catch (e) {
-        await delayAPI(count + 1 + "회 소환사 랭크정보 호출 실패");
-        const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
-          sId,
-          RIOT_API
-        );
-        sTier = tier;
-        sRank = rank;
-        sPoints = leaguePoints;
-        sWins = wins;
-        sLosses = losses;
-        await delayAPI(count + 1 + "회 소환사 랭크정보 재호출 완료");
-      }
+      const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
+        sId,
+        RIOT_API
+      );
+      // console.log(tier, rank, leaguePoints, wins, losses);
+      sTier = tier;
+      sRank = rank;
+      sPoints = leaguePoints;
+      sWins = wins;
+      sLosses = losses;
+      await delayAPI(count + 1 + "회 소환사 랭크정보 호출 완료");
+    } catch (e) {
+      recheck = true;
+      console.log("__13__");
+      console.log(e);
+      await delayAPI(count + 1 + "회 소환사 랭크정보 호출 실패");
+      const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
+        sId,
+        RIOT_API
+      );
+      sTier = tier;
+      sRank = rank;
+      sPoints = leaguePoints;
+      sWins = wins;
+      sLosses = losses;
+      await delayAPI(count + 1 + "회 소환사 랭크정보 재호출 완료");
+    }
 
+    try {
       sTierNum = 99;
       // console.log("셋 : " + sTierNum);
-
       sTierNum = await setSTierNum(sTier, sTierNum);
       // console.log("체크 : " + sTier + " " + sTierNum);
+    } catch (e) {
+      // console.log("리체크 : " + sTier + " " + +sTierNum);
+      recheck = true;
+      console.log("__6__");
+      console.log(e);
+      sTierNum = await setSTierNum(sTier, sTierNum);
+    }
 
-      if (sTierNum === 99) {
+    if (sTierNum === 99) {
+      try {
+        sTierNum = await setSTierNum(sTier, sTierNum);
+        // console.log("리체크 : " + sTier + " " + +sTierNum);
+      } catch (e) {
+        recheck = true;
+        console.log("__7__");
+        console.log(e);
         sTierNum = await setSTierNum(sTier, sTierNum);
         // console.log("리체크 : " + sTier + " " + +sTierNum);
       }
+    }
 
-      if (sTierNum === 99) {
-        sTierNum = await setSTierNum(sTier, sTierNum);
-        // console.log("리체크 : " + sTier + " " + +sTierNum);
-      }
-
+    try {
       await prisma.updateSummoner({
         where: { sId },
         data: {
@@ -265,26 +295,25 @@ export const serverRefresh = async () => {
         }
       });
     } catch (e) {
-      try {
-        await prisma.updateSummoner({
-          where: { sId },
-          data: {
-            sAccountId,
-            sName,
-            sAvatar: sAvatarUrl,
-            sLevel,
-            sTier: "UNRANKED",
-            sTierNum: 99,
-            sRank: "UNRANKED",
-            sPoints: 0,
-            sWins: 0,
-            sLosses: 0
-          }
-        });
-      } catch (e) {
-        console.log(e);
-        return false;
-      }
+      recheck = true;
+      console.log("__9__");
+      console.log(e);
+
+      await prisma.updateSummoner({
+        where: { sId },
+        data: {
+          sAccountId,
+          sName,
+          sAvatar: sAvatarUrl,
+          sLevel,
+          sTier,
+          sTierNum,
+          sRank,
+          sPoints,
+          sWins,
+          sLosses
+        }
+      });
     }
 
     // 게임ID 업데이트
@@ -321,6 +350,8 @@ export const serverRefresh = async () => {
       await delayAPI(count + 1 + "회 소환사 매치정보 호출 완료");
     } catch (e) {
       recheck = true;
+      console.log("__10__");
+      console.log(e);
       await delayAPI(count + 1 + "회 소환사 매치정보 호출 실패");
       const {
         data: { matches }
@@ -395,6 +426,8 @@ export const serverRefresh = async () => {
         );
       } catch (e) {
         recheck = true;
+        console.log("__11__");
+        console.log(e);
         await delayAPI(
           count + 1 + "회 소환사 매치정보 " + (i + 1) + "번 호출 실패"
         );
@@ -461,6 +494,8 @@ export const serverRefresh = async () => {
         );
       } catch (e) {
         recheck = true;
+        console.log("__12__");
+        console.log(e);
         await delayAPI(
           count + 1 + "회 소환사 타임라인 " + (i + 1) + "번 호출 실패"
         );

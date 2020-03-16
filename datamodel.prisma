@@ -45,3 +45,10 @@ type Detail {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
+
+type Request {
+  id: ID! @id
+  rPlatform: String!
+  rName: String!
+  rId: String!
+}
