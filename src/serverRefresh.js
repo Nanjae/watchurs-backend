@@ -33,7 +33,7 @@ const getRankedData = async (sId, RIOT_API) => {
     }
   } catch (e) {
     console.log("__1__");
-    console.log(e);
+    console.log(e.message);
     return;
   }
 };
@@ -86,8 +86,7 @@ const setSTierNum = async (sTier, sTierNum) => {
 const delayAPI = item => {
   return new Promise(resolve =>
     setTimeout(() => {
-      console.log(new Date());
-      console.log(item);
+      console.log(new Date() + " : " + item);
       resolve();
     }, parseInt(process.env.INTERVAL_TIME))
   );
@@ -100,7 +99,7 @@ const getBroadcasterData = async (bId, TWITCH_CID) => {
     });
   } catch (e) {
     console.log("__2__");
-    console.log(e);
+    console.log(e.message);
     return false;
   }
 };
@@ -161,7 +160,7 @@ export const serverRefresh = async () => {
     } catch (e) {
       recheck = true;
       console.log("__3__");
-      console.log(e);
+      console.log(e.message);
       await delayAPI(count + 1 + "회 브로드캐스터 이름, 아바타 호출 실패");
     }
 
@@ -174,7 +173,7 @@ export const serverRefresh = async () => {
     } catch (e) {
       recheck = true;
       console.log("__4__");
-      console.log(e);
+      console.log(e.message);
       await delayAPI(count + 1 + "회 브로드캐스터 기본정보 호출 실패");
       await prisma.updateBroadcaster({
         where: { bId },
@@ -202,7 +201,7 @@ export const serverRefresh = async () => {
     } catch (e) {
       recheck = true;
       console.log("__5__");
-      console.log(e);
+      console.log(e.message);
       await delayAPI(count + 1 + "회 소환사 기본정보 호출 실패");
       const {
         data: { name, profileIconId, accountId, summonerLevel }
@@ -238,7 +237,7 @@ export const serverRefresh = async () => {
     } catch (e) {
       recheck = true;
       console.log("__13__");
-      console.log(e);
+      console.log(e.message);
       await delayAPI(count + 1 + "회 소환사 랭크정보 호출 실패");
       const { tier, rank, leaguePoints, wins, losses } = await getRankedData(
         sId,
@@ -261,7 +260,7 @@ export const serverRefresh = async () => {
       // console.log("리체크 : " + sTier + " " + +sTierNum);
       recheck = true;
       console.log("__6__");
-      console.log(e);
+      console.log(e.message);
       sTierNum = await setSTierNum(sTier, sTierNum);
     }
 
@@ -272,7 +271,7 @@ export const serverRefresh = async () => {
       } catch (e) {
         recheck = true;
         console.log("__7__");
-        console.log(e);
+        console.log(e.message);
         sTierNum = await setSTierNum(sTier, sTierNum);
         // console.log("리체크 : " + sTier + " " + +sTierNum);
       }
@@ -297,7 +296,7 @@ export const serverRefresh = async () => {
     } catch (e) {
       recheck = true;
       console.log("__9__");
-      console.log(e);
+      console.log(e.message);
 
       await prisma.updateSummoner({
         where: { sId },
@@ -351,7 +350,7 @@ export const serverRefresh = async () => {
     } catch (e) {
       recheck = true;
       console.log("__10__");
-      console.log(e);
+      console.log(e.message);
       await delayAPI(count + 1 + "회 소환사 매치정보 호출 실패");
       const {
         data: { matches }
@@ -427,7 +426,7 @@ export const serverRefresh = async () => {
       } catch (e) {
         recheck = true;
         console.log("__11__");
-        console.log(e);
+        console.log(e.message);
         await delayAPI(
           count + 1 + "회 소환사 매치정보 " + (i + 1) + "번 호출 실패"
         );
@@ -495,7 +494,7 @@ export const serverRefresh = async () => {
       } catch (e) {
         recheck = true;
         console.log("__12__");
-        console.log(e);
+        console.log(e.message);
         await delayAPI(
           count + 1 + "회 소환사 타임라인 " + (i + 1) + "번 호출 실패"
         );
