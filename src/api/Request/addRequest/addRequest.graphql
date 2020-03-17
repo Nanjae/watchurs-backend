@@ -1,0 +1,3 @@
+type Mutation {
+  addRequest(rPlatform: String!, rId: String!, rName: String!): Boolean!
+}
