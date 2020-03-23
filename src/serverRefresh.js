@@ -94,17 +94,26 @@ const delayAPI = item => {
 
 const getBroadcasterData = async (bId, TWITCH_CID) => {
   try {
-    return await axios.get(`https://api.twitch.tv/helix/users?login=${bId}`, {
+    const {
+      data: { data }
+    } = await axios.get(`https://api.twitch.tv/helix/users?login=${bId}`, {
       headers: { "Client-ID": TWITCH_CID }
     });
+    // console.log(data[0]);
+    if (data[0] === undefined) {
+      return { display_name: null, profile_image_url: null };
+    }
+    return data[0];
   } catch (e) {
     console.log("__2__");
     console.log(e.message);
-    return false;
+    return { display_name: null, profile_image_url: null };
   }
 };
 
 export let refreshState = false;
+
+let count = parseInt(process.env.REFRESH_COUNT);
 
 export const serverRefresh = async () => {
   refreshState = true;
@@ -113,11 +122,10 @@ export const serverRefresh = async () => {
   const summoners = await prisma.summoners();
   const RIOT_API = process.env.RIOT_API;
   const TWITCH_CID = process.env.TWITCH_CID;
-  let count = 0;
   let recheck = false;
   const MAX_COUNT = summoners.length;
   while (count < MAX_COUNT) {
-    await delayAPI(count + 1 + "회 호출 시작");
+    await delayAPI(MAX_COUNT + "회 중 " + (count + 1) + "회 호출 시작");
 
     const {
       data: {
@@ -136,18 +144,22 @@ export const serverRefresh = async () => {
     const bId = broadcaster[0].sBroadcaster.bId;
     const bPlatform = broadcaster[0].sBroadcaster.bPlatform;
 
-    let bName = "";
-    let bAvatar = "";
+    let bName = broadcaster[0].sBroadcaster.bName;
+    let bAvatar = broadcaster[0].sBroadcaster.bAvatar;
 
     try {
       if (bPlatform === "TWITCH") {
-        const {
-          data: {
-            data: [{ display_name, profile_image_url }]
-          }
-        } = await getBroadcasterData(bId, TWITCH_CID);
-        bName = display_name;
-        bAvatar = profile_image_url;
+        const { display_name, profile_image_url } = await getBroadcasterData(
+          bId,
+          TWITCH_CID
+        );
+        // console.log(display_name + " & " + profile_image_url);
+        if (display_name !== null) {
+          bName = display_name;
+        }
+        if (profile_image_url !== null) {
+          bAvatar = profile_image_url;
+        }
       }
 
       if (bPlatform === "AFREECATV") {
@@ -568,7 +580,9 @@ export const serverRefresh = async () => {
     }
     if (count === MAX_COUNT) {
       await delayAPI("전체 호출 종료");
+      count = 0;
       refreshState = false;
+      break;
     }
   }
 };
