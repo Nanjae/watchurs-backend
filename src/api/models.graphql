@@ -51,4 +51,6 @@ type Request {
   rPlatform: String!
   rName: String!
   rId: String!
+  createdAt: String!
+  updatedAt: String!
 }
