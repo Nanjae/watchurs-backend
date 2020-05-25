@@ -30,6 +30,7 @@
     "generate": "prisma generate",
     "prisma": "yarn run deploy && yarn run generate",
     "admin": "prisma admin",
+    "init": "prisma init",
     "dev": "nodemon --exec babel-node src/server.js",
     "prebuild": "yarn run generate",
     "build": "babel src -d build",
@@ -39,5 +40,6 @@
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.7.4",
     "nodemon": "^2.0.1"
-  }
+  },
+  "description": "watchurs-backend"
 }

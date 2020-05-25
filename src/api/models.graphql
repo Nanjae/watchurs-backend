@@ -1,56 +1,48 @@
 type Broadcaster {
   id: ID!
-  bId: String!
-  bName: String!
-  bAvatar: String!
-  bPlatform: String!
-  bSummoner: [Summoner]
-  createdAt: String!
-  updatedAt: String!
+  broadId: String!
+  name: String
+  avatar: String
+  platform: String
+  summoners: [Summoner]
+  createdAt: String
+  updatedAt: String
 }
 
 type Summoner {
   id: ID!
-  sId: String!
-  sAccountId: String!
-  sName: String!
-  sAvatar: String!
-  sLevel: Int!
-  sTier: String!
-  sTierNum: Int!
-  sRank: String!
-  sPoints: Int!
-  sWins: Int!
-  sLosses: Int!
-  sDetail: [Detail]
-  sBroadcaster: Broadcaster!
-  createdAt: String!
-  updatedAt: String!
+  summonerId: String!
+  accountId: String!
+  name: String
+  avatar: String
+  level: Int
+  tft: tftData
+  lol: lolData
+  broadcaster: Broadcaster!
+  createdAt: String
+  updatedAt: String
 }
 
-type Detail {
-  id: ID!
-  dGameId: String!
-  dGameDuration: Int
-  dChampionName: String
-  dChampionAvatar: String
-  dParticipantId: Int
-  dLane: Int
-  dWins: [String]
-  dChampLevel: [Int]
-  dKills: [Int]
-  dDeaths: [Int]
-  dAssists: [Int]
-  dSummoner: Summoner!
-  createdAt: String!
-  updatedAt: String!
+type TFTData {
+  id: ID! @id
+  tier: String
+  rank: String
+  points: Int
+  wins: Int
+  losses: Int
+  summoner: Summoner!
+  createdAt: String
+  updatedAt: String
 }
 
-type Request {
+type LOLData {
   id: ID!
-  rPlatform: String!
-  rName: String!
-  rId: String!
-  createdAt: String!
-  updatedAt: String!
+  tier: String
+  rank: String
+  points: Int
+  wins: Int
+  losses: Int
+  summoner: Summoner!
+  createdAt: String
+  updatedAt: String
 }

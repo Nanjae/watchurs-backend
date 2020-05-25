@@ -1,56 +1,48 @@
 type Broadcaster {
   id: ID! @id
-  bId: String! @unique
-  bName: String!
-  bAvatar: String!
-  bPlatform: String!
-  bSummoner: [Summoner] @relation(name: "SummonerOfBroadcaster" onDelete: CASCADE)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  broadId: String! @unique
+  name: String
+  avatar: String
+  platform: String
+  summoners: [Summoner] @relation(name: "SummonerOfBroadcaster", onDelete: CASCADE)
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type Summoner {
   id: ID! @id
-  sId: String! @unique
-  sAccountId: String! @unique
-  sName: String!
-  sAvatar: String!
-  sLevel: Int! @default(value:100)
-  sTier: String! @default(value:"UNRANKED")
-  sTierNum: Int! @default(value:99)
-  sRank: String! @default(value:"UNRANKED")
-  sPoints: Int! @default(value:0)
-  sWins: Int! @default(value:0)
-  sLosses: Int! @default(value:0)
-  sDetail: [Detail] @relation(name: "DetailOfSummoner" onDelete: CASCADE)
-  sBroadcaster: Broadcaster! @relation(name: "SummonerOfBroadcaster" link: INLINE)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  summonerId: String! @unique
+  accountId: String! @unique
+  name: String!
+  avatar: String
+  level: Int
+  tftData: TFTData @relation(name: "TFTDataOfSummoner", onDelete: CASCADE)
+  lolData: LOLData @relation(name: "LOLDataOfSummoner", onDelete: CASCADE)
+  broadcaster: Broadcaster! @relation(name: "SummonerOfBroadcaster", link: INLINE)
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
-type Detail {
+type TFTData {
   id: ID! @id
-  dGameId: String!
-  dGameDuration: Int
-  dChampionName: String
-  dChampionAvatar: String
-  dParticipantId: Int
-  dLane: Int
-  dWins: [String] @scalarList(strategy: RELATION)
-  dChampLevel: [Int] @scalarList(strategy: RELATION)
-  dKills: [Int] @scalarList(strategy: RELATION)
-  dDeaths: [Int] @scalarList(strategy: RELATION)
-  dAssists: [Int] @scalarList(strategy: RELATION)
-  dSummoner: Summoner! @relation(name: "DetailOfSummoner" link: INLINE)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  tier: String
+  rank: String
+  points: Int
+  wins: Int
+  losses: Int
+  summoner: Summoner! @relation(name: "TFTDataOfSummoner", link: INLINE)
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
-type Request {
+type LOLData {
   id: ID! @id
-  rPlatform: String!
-  rName: String!
-  rId: String!
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  tier: String
+  rank: String
+  points: Int
+  wins: Int
+  losses: Int
+  summoner: Summoner @relation(name: "LOLDataOfSummoner", link: INLINE)
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
