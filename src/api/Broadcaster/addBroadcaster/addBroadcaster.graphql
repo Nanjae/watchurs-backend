@@ -1,0 +1,8 @@
+enum Platform {
+  TWITCH
+  AFREECATV
+}
+
+type Mutation {
+  addBroadcaster(broadId: String!, platform: Platform!): Boolean!
+}

@@ -16,15 +16,15 @@ type Summoner {
   name: String
   avatar: String
   level: Int
-  tft: tftData
-  lol: lolData
+  tftData: TFTData
+  lolData: LOLData
   broadcaster: Broadcaster!
   createdAt: String
   updatedAt: String
 }
 
 type TFTData {
-  id: ID! @id
+  id: ID!
   tier: String
   rank: String
   points: Int
