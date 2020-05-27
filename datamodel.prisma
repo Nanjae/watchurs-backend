@@ -25,9 +25,10 @@ type Summoner {
 
 type TFTData {
   id: ID! @id
-  tier: String
-  rank: String
-  points: Int
+  tier: String! @default(value: "UNRANKED")
+  tierNum: Int! @default(value: 99)
+  rank: String! @default(value: "99")
+  points: Int! @default(value: 0)
   wins: Int
   losses: Int
   summoner: Summoner! @relation(name: "TFTDataOfSummoner", link: INLINE)
@@ -37,9 +38,10 @@ type TFTData {
 
 type LOLData {
   id: ID! @id
-  tier: String
-  rank: String
-  points: Int
+  tier: String! @default(value: "UNRANKED")
+  tierNum: Int! @default(value: 99)
+  rank: String! @default(value: "99")
+  points: Int! @default(value: 0)
   wins: Int
   losses: Int
   summoner: Summoner @relation(name: "LOLDataOfSummoner", link: INLINE)

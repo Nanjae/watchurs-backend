@@ -71,6 +71,9 @@ export default {
               level: getSummonerLevel,
             },
           });
+          await prisma.createTFTData({
+            summoner: { connect: { id } },
+          });
           return true;
         } catch (e) {
           console.log(e);
@@ -88,6 +91,7 @@ export default {
             broadcaster: {
               connect: { broadId },
             },
+            tftData: { create },
           });
           return true;
         } catch (e) {

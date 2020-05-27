@@ -1,3 +1,3 @@
 type Query {
-  seeSortSummoners(from: Int, count: Int): [Summoner!]
+  seeSortSummoners: [TFTData!]
 }

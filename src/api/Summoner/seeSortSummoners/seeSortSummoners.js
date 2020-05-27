@@ -11,12 +11,41 @@ import axios from "axios";
 
 export default {
   Query: {
-    seeSortSummoners: async (_, args) => {
-      const { from, count } = args;
+    seeSortSummoners: async (_, __) => {
+      const unsortedSummoners = await prisma.tFTDatas();
 
-      const summoners = await prisma.summoners({ skip: from, first: count });
+      let sortBy = [
+        {
+          prop: "tierNum",
+          direction: 1,
+        },
+        {
+          prop: "rank",
+          direction: 1,
+        },
+        {
+          prop: "points",
+          direction: -1,
+        },
+      ];
 
-      return summoners;
+      const sortedSummoners = unsortedSummoners.sort(function(a, b) {
+        let i = 0,
+          result = 0;
+        while (i < sortBy.length && result === 0) {
+          result =
+            sortBy[i].direction *
+            (a[sortBy[i].prop] < b[sortBy[i].prop]
+              ? -1
+              : a[sortBy[i].prop] > b[sortBy[i].prop]
+              ? 1
+              : 0);
+          i++;
+        }
+        return result;
+      });
+
+      return sortedSummoners;
     },
   },
 };

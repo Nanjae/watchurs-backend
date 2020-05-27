@@ -16,23 +16,23 @@ export default {
       const unsortedSummoners =
         platform !== undefined
           ? await prisma.summoners({
-              where: { sBroadcaster: { bPlatform: platform } }
+              where: { sBroadcaster: { bPlatform: platform } },
             })
           : await prisma.summoners();
 
       let sortBy = [
         {
           prop: "sTierNum",
-          direction: 1
+          direction: 1,
         },
         {
           prop: "sRank",
-          direction: 1
+          direction: 1,
         },
         {
           prop: "sPoints",
-          direction: -1
-        }
+          direction: -1,
+        },
       ];
 
       const sortedSummoners = unsortedSummoners.sort(function(a, b) {
@@ -59,6 +59,6 @@ export default {
       //   first
       // });
       // return unsortedSummoners;
-    }
-  }
+    },
+  },
 };
