@@ -182,9 +182,9 @@ const updateWhileFunction = async (whileCount) => {
   }
 };
 
-export default async () => {
-  let whileCount = 0;
+let whileCount = 0;
 
+export default async () => {
   try {
     updateWhileFunction(0);
   } catch (e) {

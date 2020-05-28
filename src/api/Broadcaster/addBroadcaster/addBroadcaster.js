@@ -54,7 +54,7 @@ export default {
           },
         } = await getBroadcasterData(broadId, TWITCH_CID);
         name = display_name;
-        avatar = profile_image_url;
+        avatar = profile_image_url.replace("300x300", "70x70");
       } else {
         console.log("TWITCH 플랫폼이 아닙니다.");
         return false;
