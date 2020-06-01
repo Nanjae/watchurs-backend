@@ -29,6 +29,23 @@ const getSummonerData = async (summonerId, RIOT_API) => {
   }
 };
 
+const getBroadcasterData = async (broadId, TWITCH_CID) => {
+  try {
+    return await axios.get(
+      `https://api.twitch.tv/helix/users?login=${broadId}`,
+      {
+        headers: {
+          "Client-ID": TWITCH_CID,
+          Authorization: "Bearer 4hm107h0r6xf1qg2cic9rlh25rz55u",
+        },
+      }
+    );
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
 const getTFTData = async (summonerId, RIOT_API) => {
   try {
     return await axios.get(
@@ -68,6 +85,8 @@ const setTierNum = async (tier) => {
 
 const updateWhileFunction = async (whileCount) => {
   const RIOT_API = process.env.RIOT_DEV_API;
+  const TWITCH_CID = process.env.TWITCH_CID;
+
   updateIng = true;
   console.log(`업데이트 사이클: 시작`);
   let summoners = await prisma.summoners();
@@ -79,6 +98,30 @@ const updateWhileFunction = async (whileCount) => {
     console.log(`${whileCount + 1} of ${maxCount}: 업데이트 시작`);
 
     let summonerId = summoners[whileCount].summonerId;
+    let broadcaster = await prisma.broadcasters({
+      where: { summoners_some: { summonerId } },
+    });
+    let broadId = broadcaster[0].broadId;
+
+    let {
+      data: {
+        data: [{ display_name, profile_image_url }],
+      },
+    } = await getBroadcasterData(broadId, TWITCH_CID);
+    let getBroadName = display_name;
+    let getBroadAvatar = profile_image_url.replace("300x300", "70x70");
+    await delayAPI(
+      `${whileCount + 1} of ${maxCount}: 브로드캐스터 정보 수집 성공`
+    );
+
+    await prisma.updateBroadcaster({
+      where: { broadId },
+      data: { name: getBroadName, avatar: getBroadAvatar },
+    });
+
+    console.log(
+      `${whileCount + 1} of ${maxCount}: 브로드캐스터 정보 업데이트 완료`
+    );
 
     let {
       data: {
@@ -153,6 +196,10 @@ const updateWhileFunction = async (whileCount) => {
 
     // GC
     summonerId = null;
+    broadcaster = null;
+    broadId = null;
+    getBroadName = null;
+    getBroadAvatar = null;
     getName = null;
     getProfileIconId = null;
     getSummonerLevel = null;
