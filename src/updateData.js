@@ -12,7 +12,7 @@ const delayAPI = (item) => {
       );
       // console.log(process.memoryUsage().heapUsed);
       resolve();
-    }, parseInt("5000"))
+    }, parseInt("10000"))
   );
 };
 
@@ -29,14 +29,14 @@ const getSummonerData = async (summonerId, RIOT_API) => {
   }
 };
 
-const getBroadcasterData = async (broadId, TWITCH_CID) => {
+const getBroadData = async (broadId, TWITCH_CID, TWITCH_SECRET) => {
   try {
     return await axios.get(
       `https://api.twitch.tv/helix/users?login=${broadId}`,
       {
         headers: {
           "Client-ID": TWITCH_CID,
-          Authorization: "Bearer 4hm107h0r6xf1qg2cic9rlh25rz55u",
+          Authorization: `Bearer ${TWITCH_SECRET}`,
         },
       }
     );
@@ -86,6 +86,7 @@ const setTierNum = async (tier) => {
 const updateWhileFunction = async (whileCount) => {
   const RIOT_API = process.env.RIOT_DEV_API;
   const TWITCH_CID = process.env.TWITCH_CID;
+  const TWITCH_SECRET = process.env.TWITCH_SECRET;
 
   updateIng = true;
   console.log(`업데이트 사이클: 시작`);
@@ -107,7 +108,7 @@ const updateWhileFunction = async (whileCount) => {
       data: {
         data: [{ display_name, profile_image_url }],
       },
-    } = await getBroadcasterData(broadId, TWITCH_CID);
+    } = await getBroadData(broadId, TWITCH_CID, TWITCH_SECRET);
     let getBroadName = display_name;
     let getBroadAvatar = profile_image_url.replace("300x300", "70x70");
     await delayAPI(
