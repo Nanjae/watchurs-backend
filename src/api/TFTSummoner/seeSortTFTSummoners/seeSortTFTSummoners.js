@@ -11,8 +11,8 @@ import axios from "axios";
 
 export default {
   Query: {
-    seeSortSummoners: async (_, __) => {
-      const unsortedSummoners = await prisma.tFTDatas();
+    seeSortTFTSummoners: async (_, __) => {
+      const unsortedTFTSummoners = await prisma.tFTDatas();
 
       let sortBy = [
         {
@@ -29,7 +29,7 @@ export default {
         },
       ];
 
-      const sortedSummoners = unsortedSummoners.sort(function(a, b) {
+      const sortedTFTSummoners = unsortedTFTSummoners.sort(function(a, b) {
         let i = 0,
           result = 0;
         while (i < sortBy.length && result === 0) {
@@ -45,7 +45,7 @@ export default {
         return result;
       });
 
-      return sortedSummoners;
+      return sortedTFTSummoners;
     },
   },
 };

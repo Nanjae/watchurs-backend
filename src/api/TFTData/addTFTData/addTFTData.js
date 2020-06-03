@@ -39,13 +39,13 @@ export default {
       const RIOT_API = process.env.RIOT_DEV_API;
       const { broadId } = args;
 
-      const summoners = await prisma.summoners({
+      const summoners = await prisma.tFTSummoners({
         where: { broadcaster: { broadId } },
       });
 
       for (let i = 0; i < summoners.length; i++) {
         const existTFTData = await prisma.$exists.tFTData({
-          summoner: { id: summoners[i].id },
+          tftSummoner: { id: summoners[i].id },
         });
 
         try {
@@ -71,10 +71,10 @@ export default {
                 points,
                 wins,
                 losses,
-                summoner: { connect: { id: summoners[i].id } },
+                tftSummoner: { connect: { id: summoners[i].id } },
               });
             } else {
-              await prisma.updateSummoner({
+              await prisma.updateTFTSummoner({
                 where: { id: summoners[i].id },
                 data: {
                   tftData: {

@@ -2,6 +2,7 @@ import { prisma } from "../../../generated/prisma-client";
 
 export default {
   Broadcaster: {
-    summoners: ({ id }) => prisma.broadcaster({ id }).summoners(),
+    tftSummoners: ({ id }) => prisma.broadcaster({ id }).tftSummoners(),
+    lolSummoners: ({ id }) => prisma.broadcaster({ id }).lolSummoners(),
   },
 };

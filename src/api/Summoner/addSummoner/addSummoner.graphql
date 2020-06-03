@@ -1,3 +1,0 @@
-type Mutation {
-  addSummoner(broadId: String!, sumName: String!): Boolean!
-}

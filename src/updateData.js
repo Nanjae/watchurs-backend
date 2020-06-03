@@ -83,14 +83,14 @@ const setTierNum = async (tier) => {
   }
 };
 
-const updateWhileFunction = async (whileCount) => {
+const updateTFTWhileFunction = async (whileCount) => {
   const RIOT_API = process.env.RIOT_DEV_API;
   const TWITCH_CID = process.env.TWITCH_CID;
   const TWITCH_SECRET = process.env.TWITCH_SECRET;
 
   updateIng = true;
   console.log(`업데이트 사이클: 시작`);
-  let summoners = await prisma.summoners();
+  let summoners = await prisma.tFTSummoners();
 
   let maxCount = summoners.length;
 
@@ -100,7 +100,7 @@ const updateWhileFunction = async (whileCount) => {
 
     let summonerId = summoners[whileCount].summonerId;
     let broadcaster = await prisma.broadcasters({
-      where: { summoners_some: { summonerId } },
+      where: { tftSummoners_some: { summonerId } },
     });
     let broadId = broadcaster[0].broadId;
 
@@ -142,7 +142,7 @@ const updateWhileFunction = async (whileCount) => {
 
     await delayAPI(`${whileCount + 1} of ${maxCount}: 소환사 정보 수집 성공`);
 
-    await prisma.updateSummoner({
+    await prisma.updateTFTSummoner({
       where: { summonerId },
       data: {
         name: getName,
@@ -174,7 +174,7 @@ const updateWhileFunction = async (whileCount) => {
       tftLosses = tftData[0].losses;
       tftTierNum = await setTierNum(tftTier);
 
-      await prisma.updateSummoner({
+      await prisma.updateTFTSummoner({
         where: { summonerId },
         data: {
           tftData: {
@@ -234,11 +234,11 @@ let whileCount = 0;
 
 export default async () => {
   try {
-    updateWhileFunction(0);
+    updateTFTWhileFunction(0);
   } catch (e) {
     console.log(e.name);
     console.log(e.message);
     await delayAPI(`${whileCount + 1} of ERROR: 에러 발생`);
-    updateWhileFunction(whileCount);
+    updateTFTWhileFunction(whileCount);
   }
 };

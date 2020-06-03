@@ -10,9 +10,9 @@ import { prisma } from "../../../../generated/prisma-client";
 
 export default {
   Query: {
-    countAllSummoners: async (_, __) => {
+    countAllTFTSummoners: async (_, __) => {
       return prisma
-        .summonersConnection()
+        .tFTSummonersConnection()
         .aggregate()
         .count();
     },

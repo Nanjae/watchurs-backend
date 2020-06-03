@@ -28,7 +28,7 @@ const getSummonerData = async (encodedSumName, RIOT_API) => {
 
 export default {
   Mutation: {
-    addSummoner: async (_, args) => {
+    addTFTSummoner: async (_, args) => {
       const RIOT_API = process.env.RIOT_DEV_API;
       const { broadId, sumName } = args;
       const encodedSumName = encodeURIComponent(sumName);
@@ -44,7 +44,7 @@ export default {
         },
       } = await getSummonerData(encodedSumName, RIOT_API);
 
-      const existSummoner = await prisma.$exists.summoner({
+      const existSummoner = await prisma.$exists.tFTSummoner({
         accountId: getAccountId,
       });
 
@@ -60,19 +60,16 @@ export default {
 
       // 조건 1: 등록된 소환사
       if (existSummoner) {
-        const { id } = await prisma.summoner({ accountId: getAccountId });
+        const { id } = await prisma.tFTSummoner({ accountId: getAccountId });
         // 조건 1-1: 소환사 정보 변경
         try {
-          await prisma.updateSummoner({
+          await prisma.updateTFTSummoner({
             where: { id },
             data: {
               name: getName,
               avatar,
               level: getSummonerLevel,
             },
-          });
-          await prisma.createTFTData({
-            summoner: { connect: { id } },
           });
           return true;
         } catch (e) {
@@ -82,7 +79,7 @@ export default {
         // 조건 2: 등록되지 않은 소환사
       } else {
         try {
-          await prisma.createSummoner({
+          await prisma.createTFTSummoner({
             summonerId: getId,
             accountId: getAccountId,
             name: getName,
@@ -91,7 +88,7 @@ export default {
             broadcaster: {
               connect: { broadId },
             },
-            tftData: { create },
+            tftData: { create: { tier: "UNRANKED" } },
           });
           return true;
         } catch (e) {

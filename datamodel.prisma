@@ -1,24 +1,37 @@
 type Broadcaster {
   id: ID! @id
   broadId: String! @unique
-  name: String
+  name: String!
   avatar: String
-  platform: String
-  summoners: [Summoner] @relation(name: "SummonerOfBroadcaster", onDelete: CASCADE)
+  platform: String!
+  tftSummoners: [TFTSummoner] @relation(name: "TFTSummonerOfBroadcaster", onDelete: CASCADE)
+  lolSummoners: [LOLSummoner] @relation(name: "LOLSummonerOfBroadcaster", onDelete:CASCADE)
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
 }
 
-type Summoner {
+type TFTSummoner {
   id: ID! @id
   summonerId: String! @unique
   accountId: String! @unique
   name: String!
   avatar: String
   level: Int
-  tftData: TFTData @relation(name: "TFTDataOfSummoner", onDelete: CASCADE)
-  lolData: LOLData @relation(name: "LOLDataOfSummoner", onDelete: CASCADE)
-  broadcaster: Broadcaster! @relation(name: "SummonerOfBroadcaster", link: INLINE)
+  tftData: TFTData @relation(name: "TFTDataOfTFTSummoner", onDelete: CASCADE)
+  broadcaster: Broadcaster! @relation(name: "TFTSummonerOfBroadcaster", link: INLINE)
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
+}
+
+type LOLSummoner {
+  id: ID! @id
+  summonerId: String! @unique
+  accountId: String! @unique
+  name: String!
+  avatar: String
+  level: Int
+  lolData: LOLData @relation(name: "LOLDataOfLOLSummoner", onDelete: CASCADE)
+  broadcaster: Broadcaster! @relation(name: "LOLSummonerOfBroadcaster", link: INLINE)
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
 }
@@ -31,7 +44,7 @@ type TFTData {
   points: Int! @default(value: 0)
   wins: Int
   losses: Int
-  summoner: Summoner! @relation(name: "TFTDataOfSummoner", link: INLINE)
+  tftSummoner: TFTSummoner! @relation(name: "TFTDataOfTFTSummoner", link: INLINE)
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
 }
@@ -44,7 +57,7 @@ type LOLData {
   points: Int! @default(value: 0)
   wins: Int
   losses: Int
-  summoner: Summoner @relation(name: "LOLDataOfSummoner", link: INLINE)
+  lolSummoner: LOLSummoner! @relation(name: "LOLDataOfLOLSummoner", link: INLINE)
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
 }

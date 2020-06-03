@@ -1,22 +1,35 @@
 type Broadcaster {
   id: ID!
   broadId: String!
-  name: String
+  name: String!
   avatar: String
-  platform: String
-  summoners: [Summoner]
+  platform: String!
+  tftSummoners: [TFTSummoner]
+  lolSummoners: [LOLSummoner]
   createdAt: String
   updatedAt: String
 }
 
-type Summoner {
+type TFTSummoner {
   id: ID!
   summonerId: String!
   accountId: String!
-  name: String
+  name: String!
   avatar: String
   level: Int
   tftData: TFTData
+  broadcaster: Broadcaster!
+  createdAt: String
+  updatedAt: String
+}
+
+type LOLSummoner {
+  id: ID!
+  summonerId: String!
+  accountId: String!
+  name: String!
+  avatar: String
+  level: Int
   lolData: LOLData
   broadcaster: Broadcaster!
   createdAt: String
@@ -31,20 +44,20 @@ type TFTData {
   points: Int!
   wins: Int
   losses: Int
-  summoner: Summoner!
+  tftSummoner: TFTSummoner!
   createdAt: String
   updatedAt: String
 }
 
 type LOLData {
   id: ID!
-  tier: String
+  tier: String!
   tierNum: Int!
-  rank: String
-  points: Int
+  rank: String!
+  points: Int!
   wins: Int
   losses: Int
-  summoner: Summoner!
+  lolSummoner: LOLSummoner!
   createdAt: String
   updatedAt: String
 }
