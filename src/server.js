@@ -12,7 +12,7 @@ const server = new GraphQLServer({
 });
 
 setInterval(() => {
-  if (!updateIng) {
+  if (updateIng === "false") {
     updateData();
   }
 }, 10000);

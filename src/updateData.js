@@ -19,7 +19,7 @@ const delayAPI = (item) => {
 const getSummonerData = async (summonerId, RIOT_API) => {
   try {
     return await axios.get(
-      `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${summonerId}?api_key=${RIOT_API}`
+      `https://kr.api.riotgames.com/tft/summoner/v1/summoners/${summonerId}?api_key=${RIOT_API}`
     );
   } catch (e) {
     console.log(e.name);
@@ -88,7 +88,7 @@ const updateTFTWhileFunction = async (whileCount) => {
   const TWITCH_CID = process.env.TWITCH_CID;
   const TWITCH_SECRET = process.env.TWITCH_SECRET;
 
-  updateIng = true;
+  updateIng = "true";
   console.log(`업데이트 사이클: 시작`);
   let summoners = await prisma.tFTSummoners();
 
@@ -111,14 +111,14 @@ const updateTFTWhileFunction = async (whileCount) => {
     } = await getBroadData(broadId, TWITCH_CID, TWITCH_SECRET);
     let getBroadName = display_name;
     let getBroadAvatar = profile_image_url.replace("300x300", "70x70");
-    await delayAPI(
-      `${whileCount + 1} of ${maxCount}: 브로드캐스터 정보 수집 성공`
-    );
-
     let countSumPerBroad = await prisma
       .tFTSummonersConnection({ where: { broadcaster: { broadId } } })
       .aggregate()
       .count();
+
+    await delayAPI(
+      `${whileCount + 1} of ${maxCount}: 브로드캐스터 정보 수집 성공`
+    );
 
     await prisma.updateBroadcaster({
       where: { broadId },
@@ -206,6 +206,7 @@ const updateTFTWhileFunction = async (whileCount) => {
     broadId = null;
     getBroadName = null;
     getBroadAvatar = null;
+    countSumPerBroad = null;
     getName = null;
     getProfileIconId = null;
     getSummonerLevel = null;
@@ -228,7 +229,7 @@ const updateTFTWhileFunction = async (whileCount) => {
       maxCount = null;
       whileCount = null;
       summoners = null;
-      updateIng = false;
+      updateIng = "false";
 
       break;
     }
