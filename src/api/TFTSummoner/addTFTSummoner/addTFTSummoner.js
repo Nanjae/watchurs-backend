@@ -29,7 +29,7 @@ const getSummonerData = async (encodedSumName, RIOT_API) => {
 export default {
   Mutation: {
     addTFTSummoner: async (_, args) => {
-      const RIOT_API = process.env.RIOT_DEV_API;
+      const RIOT_API = process.env.RIOT_TFT_API;
       const { broadId, sumName } = args;
       const encodedSumName = encodeURIComponent(sumName);
 

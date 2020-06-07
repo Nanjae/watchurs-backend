@@ -36,7 +36,7 @@ const setTierNum = async (tier) => {
 export default {
   Mutation: {
     addTFTData: async (_, args) => {
-      const RIOT_API = process.env.RIOT_DEV_API;
+      const RIOT_API = process.env.RIOT_TFT_API;
       const { broadId } = args;
 
       const summoners = await prisma.tFTSummoners({

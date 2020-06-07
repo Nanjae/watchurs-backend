@@ -1,7 +1,7 @@
 import { prisma } from "../generated/prisma-client";
 import axios from "axios";
 
-export let updateIng = false;
+export let updateIng = true;
 
 const delayAPI = (item) => {
   return new Promise((resolve) =>
@@ -84,7 +84,7 @@ const setTierNum = async (tier) => {
 };
 
 const updateTFTWhileFunction = async (whileCount) => {
-  const RIOT_API = process.env.RIOT_DEV_API;
+  const RIOT_API = process.env.RIOT_TFT_API;
   const TWITCH_CID = process.env.TWITCH_CID;
   const TWITCH_SECRET = process.env.TWITCH_SECRET;
 
