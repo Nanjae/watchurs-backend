@@ -115,9 +115,14 @@ const updateTFTWhileFunction = async (whileCount) => {
       `${whileCount + 1} of ${maxCount}: 브로드캐스터 정보 수집 성공`
     );
 
+    let countSumPerBroad = await prisma
+      .tFTSummonersConnection({ where: { broadcaster: { broadId } } })
+      .aggregate()
+      .count();
+
     await prisma.updateBroadcaster({
       where: { broadId },
-      data: { name: getBroadName, avatar: getBroadAvatar },
+      data: { name: getBroadName, avatar: getBroadAvatar, countSumPerBroad },
     });
 
     console.log(

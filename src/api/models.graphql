@@ -6,6 +6,7 @@ type Broadcaster {
   platform: String!
   tftSummoners: [TFTSummoner]
   lolSummoners: [LOLSummoner]
+  countSumPerBroad: Int!
   createdAt: String
   updatedAt: String
 }

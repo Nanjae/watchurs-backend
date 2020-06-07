@@ -6,6 +6,7 @@ type Broadcaster {
   platform: String!
   tftSummoners: [TFTSummoner] @relation(name: "TFTSummonerOfBroadcaster", onDelete: CASCADE)
   lolSummoners: [LOLSummoner] @relation(name: "LOLSummonerOfBroadcaster", onDelete:CASCADE)
+  countSumPerBroad: Int! @default(value: 1)
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
 }
