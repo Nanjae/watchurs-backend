@@ -1,8 +1,6 @@
 import { prisma } from "../generated/prisma-client";
 import axios from "axios";
 
-export let updateIng = process.env.UPDATE_BOOL;
-
 const delayAPI = (item) => {
   return new Promise((resolve) =>
     setTimeout(() => {
@@ -12,7 +10,7 @@ const delayAPI = (item) => {
       );
       // console.log(process.memoryUsage().heapUsed);
       resolve();
-    }, parseInt("10000"))
+    }, parseInt(DELAY_TIME))
   );
 };
 
@@ -24,7 +22,7 @@ const getSummonerData = async (summonerId, RIOT_API) => {
   } catch (e) {
     console.log(e.name);
     console.log(e.message);
-    console.log(`${whileCount + 1}: 소환사 정보 수집 실패`);
+    console.log(`${currentCount + 1}: 소환사 정보 수집 실패`);
     return false;
   }
 };
@@ -54,7 +52,7 @@ const getTFTData = async (summonerId, RIOT_API) => {
   } catch (e) {
     console.log(e.name);
     console.log(e.message);
-    console.log(`${whileCount + 1}: TFT 정보 수집 실패`);
+    console.log(`${currentCount + 1}: TFT 정보 수집 실패`);
     return false;
   }
 };
@@ -83,168 +81,143 @@ const setTierNum = async (tier) => {
   }
 };
 
-const updateTFTWhileFunction = async (whileCount) => {
-  const RIOT_API = process.env.RIOT_TFT_API;
-  const TWITCH_CID = process.env.TWITCH_CID;
-  const TWITCH_SECRET = process.env.TWITCH_SECRET;
+const updateTFTFunction = async (currentCount, summoners) => {
+  console.log(`${currentCount + 1} of ${maxCount}: 업데이트 시작`);
 
-  updateIng = "true";
-  console.log(`업데이트 사이클: 시작`);
-  let summoners = await prisma.tFTSummoners();
+  const summonerId = summoners[currentCount].summonerId;
+  const broadcaster = await prisma.broadcasters({
+    where: { tftSummoners_some: { summonerId } },
+  });
+  const broadId = broadcaster[0].broadId;
 
-  let maxCount = summoners.length;
+  const {
+    data: {
+      data: [{ display_name: getBroadName, profile_image_url }],
+    },
+  } = await getBroadData(broadId, TWITCH_CID, TWITCH_SECRET);
+  const getBroadAvatar = profile_image_url.replace("300x300", "70x70");
+  const countSumPerBroad = await prisma
+    .tFTSummonersConnection({ where: { broadcaster: { broadId } } })
+    .aggregate()
+    .count();
 
-  console.log(`업데이트 사이클: ${maxCount}회`);
-  while (whileCount < maxCount) {
-    console.log(`${whileCount + 1} of ${maxCount}: 업데이트 시작`);
+  await delayAPI(
+    `${currentCount + 1} of ${maxCount}: 브로드캐스터 정보 수집 성공`
+  );
 
-    let summonerId = summoners[whileCount].summonerId;
-    let broadcaster = await prisma.broadcasters({
-      where: { tftSummoners_some: { summonerId } },
-    });
-    let broadId = broadcaster[0].broadId;
+  await prisma.updateBroadcaster({
+    where: { broadId },
+    data: { name: getBroadName, avatar: getBroadAvatar, countSumPerBroad },
+  });
 
-    let {
-      data: {
-        data: [{ display_name, profile_image_url }],
-      },
-    } = await getBroadData(broadId, TWITCH_CID, TWITCH_SECRET);
-    let getBroadName = display_name;
-    let getBroadAvatar = profile_image_url.replace("300x300", "70x70");
-    let countSumPerBroad = await prisma
-      .tFTSummonersConnection({ where: { broadcaster: { broadId } } })
-      .aggregate()
-      .count();
+  console.log(
+    `${currentCount + 1} of ${maxCount}: 브로드캐스터 정보 업데이트 완료`
+  );
 
-    await delayAPI(
-      `${whileCount + 1} of ${maxCount}: 브로드캐스터 정보 수집 성공`
-    );
+  const {
+    data: {
+      name: getName,
+      profileIconId: getProfileIconId,
+      summonerLevel: getSummonerLevel,
+    },
+  } = await getSummonerData(summonerId, RIOT_API);
 
-    await prisma.updateBroadcaster({
-      where: { broadId },
-      data: { name: getBroadName, avatar: getBroadAvatar, countSumPerBroad },
-    });
+  const { data: versionData } = await axios.get(
+    `https://ddragon.leagueoflegends.com/api/versions.json`
+  );
 
-    console.log(
-      `${whileCount + 1} of ${maxCount}: 브로드캐스터 정보 업데이트 완료`
-    );
+  const summonerAvatar = `http://ddragon.leagueoflegends.com/cdn/${
+    versionData[0]
+  }/img/profileicon/${getProfileIconId}.png`;
 
-    let {
-      data: {
-        name: getName,
-        profileIconId: getProfileIconId,
-        summonerLevel: getSummonerLevel,
-      },
-    } = await getSummonerData(summonerId, RIOT_API);
+  await delayAPI(`${currentCount + 1} of ${maxCount}: 소환사 정보 수집 성공`);
 
-    let { data: versionData } = await axios.get(
-      `https://ddragon.leagueoflegends.com/api/versions.json`
-    );
+  await prisma.updateTFTSummoner({
+    where: { summonerId },
+    data: {
+      name: getName,
+      avatar: summonerAvatar,
+      level: getSummonerLevel,
+    },
+  });
 
-    let summonerAvatar = `http://ddragon.leagueoflegends.com/cdn/${
-      versionData[0]
-    }/img/profileicon/${getProfileIconId}.png`;
+  console.log(`${currentCount + 1} of ${maxCount}: 소환사 정보 업데이트 완료`);
 
-    await delayAPI(`${whileCount + 1} of ${maxCount}: 소환사 정보 수집 성공`);
+  const { data: tftData } = await getTFTData(summonerId, RIOT_API);
+
+  let tftTier = null;
+  let tftRank = null;
+  let tftPoints = null;
+  let tftWins = null;
+  let tftLosses = null;
+  let tftTierNum = null;
+
+  await delayAPI(`${currentCount + 1} of ${maxCount}: TFT 정보 수집 성공`);
+
+  if (tftData.length === 0) {
+    console.log(`${currentCount + 1} of ${maxCount}: TFT 정보 기록 없음`);
+  } else {
+    tftTier = tftData[0].tier;
+    tftRank = tftData[0].rank;
+    tftPoints = tftData[0].leaguePoints;
+    tftWins = tftData[0].wins;
+    tftLosses = tftData[0].losses;
+    tftTierNum = await setTierNum(tftTier);
 
     await prisma.updateTFTSummoner({
       where: { summonerId },
       data: {
-        name: getName,
-        avatar: summonerAvatar,
-        level: getSummonerLevel,
-      },
-    });
-
-    console.log(`${whileCount + 1} of ${maxCount}: 소환사 정보 업데이트 완료`);
-
-    let { data: tftData } = await getTFTData(summonerId, RIOT_API);
-
-    let tftTier = null;
-    let tftRank = null;
-    let tftPoints = null;
-    let tftWins = null;
-    let tftLosses = null;
-    let tftTierNum = null;
-
-    await delayAPI(`${whileCount + 1} of ${maxCount}: TFT 정보 수집 성공`);
-
-    if (tftData.length === 0) {
-      console.log(`${whileCount + 1} of ${maxCount}: TFT 정보 기록 없음`);
-    } else {
-      tftTier = tftData[0].tier;
-      tftRank = tftData[0].rank;
-      tftPoints = tftData[0].leaguePoints;
-      tftWins = tftData[0].wins;
-      tftLosses = tftData[0].losses;
-      tftTierNum = await setTierNum(tftTier);
-
-      await prisma.updateTFTSummoner({
-        where: { summonerId },
-        data: {
-          tftData: {
-            update: {
-              tier: tftTier,
-              tierNum: tftTierNum,
-              rank: tftRank,
-              points: tftPoints,
-              wins: tftWins,
-              losses: tftLosses,
-            },
+        tftData: {
+          update: {
+            tier: tftTier,
+            tierNum: tftTierNum,
+            rank: tftRank,
+            points: tftPoints,
+            wins: tftWins,
+            losses: tftLosses,
           },
         },
-      });
-
-      console.log(`${whileCount + 1} of ${maxCount}: TFT 정보 업데이트 완료`);
-    }
-
-    console.log(`${whileCount + 1} of ${maxCount}: 업데이트 종료`);
-
-    // GC
-    summonerId = null;
-    broadcaster = null;
-    broadId = null;
-    getBroadName = null;
-    getBroadAvatar = null;
-    countSumPerBroad = null;
-    getName = null;
-    getProfileIconId = null;
-    getSummonerLevel = null;
-    versionData = null;
-    summonerAvatar = null;
-    tftData = null;
-    tftTier = null;
-    tftRank = null;
-    tftPoints = null;
-    tftWins = null;
-    tftLosses = null;
-    tftTierNum = null;
-
-    whileCount += 1;
-
-    if (whileCount === maxCount) {
-      console.log(`업데이트 사이클: 종료`);
-
-      // GC
-      maxCount = null;
-      whileCount = null;
-      summoners = null;
-      updateIng = "false";
-
-      break;
-    }
+      },
+    });
+    console.log(`${currentCount + 1} of ${maxCount}: TFT 정보 업데이트 완료`);
   }
+  console.log(`${currentCount + 1} of ${maxCount}: 업데이트 종료`);
 };
 
-let whileCount = 0;
+const setTFTMaxCount = async () => {
+  console.log(`업데이트 사이클: 시작`);
+  summoners = await prisma.tFTSummoners();
+  maxCount = summoners.length;
+  console.log(`업데이트 사이클: ${maxCount}회`);
+};
+
+const RIOT_API = process.env.RIOT_TFT_API;
+const TWITCH_CID = process.env.TWITCH_CID;
+const TWITCH_SECRET = process.env.TWITCH_SECRET;
+const DELAY_TIME = process.env.DELAY_TIME;
+export let updateIng = process.env.UPDATE_BOOL;
+let currentCount = 0;
+let maxCount = 0;
+let summoners = null;
 
 export default async () => {
+  updateIng = "true";
   try {
-    updateTFTWhileFunction(0);
+    if (maxCount === 0) {
+      await setTFTMaxCount();
+    }
+    await updateTFTFunction(currentCount, summoners);
+    if (currentCount === maxCount - 1) {
+      currentCount = 0;
+      console.log(`업데이트 사이클: 종료`);
+    } else {
+      currentCount += 1;
+    }
+    updateIng = "false";
   } catch (e) {
     console.log(e.name);
     console.log(e.message);
-    await delayAPI(`${whileCount + 1} of ERROR: 에러 발생`);
-    updateTFTWhileFunction(whileCount);
+    await delayAPI(`${currentCount + 1} of ERROR: 에러 발생`);
+    updateTFTFunction(currentCount, summoners);
   }
 };

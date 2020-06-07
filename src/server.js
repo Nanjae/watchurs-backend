@@ -15,7 +15,7 @@ setInterval(() => {
   if (updateIng === "false") {
     updateData();
   }
-}, 10000);
+}, 5000);
 
 server.express.use(logger("dev"));
 
