@@ -1,7 +1,7 @@
 import { prisma } from "../generated/prisma-client";
 import axios from "axios";
 
-export let updateIng = true;
+export let updateIng = process.env.UPDATE_BOOL;
 
 const delayAPI = (item) => {
   return new Promise((resolve) =>
