@@ -155,6 +155,21 @@ const updateTFTFunction = async (currentCount, summoners) => {
   await delayAPI(`${currentCount + 1} of ${maxCount}: TFT 정보 수집 성공`);
 
   if (tftData.length === 0) {
+    await prisma.updateTFTSummoner({
+      where: { summonerId },
+      data: {
+        tftData: {
+          update: {
+            tier: "UNRANKED",
+            tierNum: 99,
+            rank: "99",
+            points: 0,
+            wins: 0,
+            losses: 0,
+          },
+        },
+      },
+    });
     console.log(`${currentCount + 1} of ${maxCount}: TFT 정보 기록 없음`);
   } else {
     tftTier = tftData[0].tier;
